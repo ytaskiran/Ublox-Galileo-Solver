@@ -89,4 +89,5 @@ class GalileoParser {
   void GnssCount(NavigationDataHead& payload);
   void GnssCount(SignalInformation& payload);
   void Log();
+  void Warn();
 };

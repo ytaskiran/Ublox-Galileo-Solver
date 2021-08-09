@@ -82,28 +82,37 @@ void GalileoParser::GnssCount(NavigationDataHead& payload){
 
     case 0:
       if (msg_type == UBX_RXM_SFRBX) gps_num_sfrbx_++;
+      else Warn();
       break;
 
     case 1:
       if (msg_type == UBX_RXM_SFRBX) sbas_num_sfrbx_++;
+      else Warn();
       break;
 
     case 2:
       if (msg_type == UBX_RXM_SFRBX) galileo_num_sfrbx_++;
+      else Warn();
       break;
 
     case 3:
       if (msg_type == UBX_RXM_SFRBX) beidou_num_sfrbx_++;
+      else Warn();
       break;
 
     case 5:
       if (msg_type == UBX_RXM_SFRBX) qzss_num_sfrbx_++;
+      else Warn();
       break;
 
     case 6:
       if (msg_type == UBX_RXM_SFRBX) glonass_num_sfrbx_++;
+      else Warn();
       break;
 
+    default:
+      std::cout << "WARNING!!!" << std::endl;
+      break;
   } 
 }
 
@@ -113,26 +122,36 @@ void GalileoParser::GnssCount(SignalInformation& payload){
 
     case 0:
       if (msg_type == UBX_NAV_SIG) gps_num_navsig_++;
+      else Warn();
       break;
 
     case 1:
       if (msg_type == UBX_NAV_SIG) sbas_num_navsig_++;
+      else Warn();
       break;
 
     case 2:
       if (msg_type == UBX_NAV_SIG) galileo_num_navsig_++;
+      else Warn();
       break;
 
     case 3:
       if (msg_type == UBX_NAV_SIG) beidou_num_navsig_++;
+      else Warn();
       break;
 
     case 5:
       if (msg_type == UBX_NAV_SIG) qzss_num_navsig_++;
+      else Warn();
       break;
 
     case 6:
       if (msg_type == UBX_NAV_SIG) glonass_num_navsig_++;
+      else Warn();
+      break;
+
+    default:
+      Warn();
       break;
   }
 }
@@ -157,4 +176,8 @@ void GalileoParser::Log(){
             << "\nQZSS: " << qzss_num_navsig_
             << "\nSBAS: " << sbas_num_navsig_ 
             << std::endl;  
+}
+
+void GalileoParser::Warn() {
+  std::cout << "WARNING!!!" << std::endl;
 }
