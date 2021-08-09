@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/cezeri/galileo/src/galileo_parser.cc
+galileo_parser.h
+/home/cezeri/galileo/src/galileo_parser.h
+
+/home/cezeri/galileo/src/galileo_parser.h
+fstream
+-
+iostream
+-
+string
+-
+

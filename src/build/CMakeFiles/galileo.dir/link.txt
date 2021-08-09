@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/galileo.dir/main.cc.o  -o galileo  libgalileo_parser.a 
