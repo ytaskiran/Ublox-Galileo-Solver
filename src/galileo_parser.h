@@ -21,7 +21,7 @@ class GalileoParser {
     uint16_t length;
   } msg_data;
 
-  struct NavigationData{
+  struct NavigationDataHead{
     uint8_t gnssId;
     uint8_t svId;
     uint8_t reserved0;
@@ -30,24 +30,63 @@ class GalileoParser {
     uint8_t chn;
     uint8_t version;
     uint8_t reserved1;
-  } payload;
+  } payload_sfrbx_head;
+
+  struct SignalInformationHead{
+    uint32_t iTOW;
+    uint8_t version;
+    uint8_t numSigs;
+    uint16_t reserved0;
+  } payload_navsig_head;
+
+  struct SignalInformation{
+    uint8_t gnssId;
+    uint8_t svId;
+    uint8_t sigId;
+    uint8_t freqId;
+    int16_t prRes;
+    uint8_t cno;
+    uint8_t qualityInd;
+    uint8_t corrSource;
+    uint8_t ionoModel;
+    unsigned int sigFlags : 16;
+    uint32_t reserved1;
+  } payload_navsig;
+
+  enum MessageType {
+    UBX_RXM_SFRBX,
+    UBX_NAV_SIG,
+    NOT_DEFINED
+  } msg_type;
 
   uint32_t words[9];
 
-  int galileo_e1_num = 0;
-  int galileo_e5_num = 0;
-  int gps_num_ = 0;
-  int sbas_num_ = 0;
-  int beidou_num_ = 0;
-  int qzss_num_ = 0;
-  int glonass_num_ = 0;
+  unsigned int galileo_num_sfrbx_ = 0;
+  unsigned int gps_num_sfrbx_ = 0;
+  unsigned int sbas_num_sfrbx_ = 0;
+  unsigned int beidou_num_sfrbx_ = 0;
+  unsigned int qzss_num_sfrbx_ = 0;
+  unsigned int glonass_num_sfrbx_ = 0;
+
+  unsigned int galileo_num_navsig_ = 0;
+  unsigned int gps_num_navsig_ = 0;
+  unsigned int sbas_num_navsig_ = 0;
+  unsigned int beidou_num_navsig_ = 0;
+  unsigned int qzss_num_navsig_ = 0;
+  unsigned int glonass_num_navsig_ = 0;
+
+  unsigned int rxm_sfrbx_counter = 0;
+  unsigned int nav_sig_counter = 0;
+
 
  public:
   explicit GalileoParser(const std::string &path);
   
   void Read();
   void CheckSyncHeaders(uint8_t& byte_);
-  bool ParseInitialData(std::ifstream& raw_data_);
+  void ParseInitialData(std::ifstream& raw_data_, MessageType& msg_type);
   void ParsePayloadData(std::ifstream& raw_data_);
-  void GnssCount(NavigationData& payload);
+  void GnssCount(NavigationDataHead& payload);
+  void GnssCount(SignalInformation& payload);
+  void Log();
 };

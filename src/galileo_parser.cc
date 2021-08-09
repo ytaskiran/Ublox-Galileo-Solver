@@ -9,37 +9,21 @@ void GalileoParser::Read() {
     std::cout << "File cannot be read" << std::endl;
   }
 
-  int counter = 0;
-
   while (!raw_data_.eof()) {
     raw_data_.read(reinterpret_cast<char*>(&byte_), sizeof(byte_));
 
     CheckSyncHeaders(byte_);
 
     if (sync_lock_1_ && sync_lock_2_) {
-      bool msg_type = ParseInitialData(raw_data_);
-
-      if (msg_type){
-        ParsePayloadData(raw_data_);
-        if (payload.numWords == 9){
-            raw_data_.read(reinterpret_cast<char*>(&words), sizeof(words));
-            std::cout << msg_data.length << std::endl;
-            break;
-        }
-      }
+      ParseInitialData(raw_data_, msg_type);
+      ParsePayloadData(raw_data_);
 
       sync_lock_1_ = false;
       sync_lock_2_ = false;
     }
   }
-  std::cout << "\nGalileo E1: " << galileo_e1_num 
-            << "\nGalileo E5: " << galileo_e5_num
-            << "\nGPS: " << gps_num_
-            << "\nGLONASS: " << glonass_num_
-            << "\nBeidou: " << beidou_num_
-            << "\nQZSS: " << qzss_num_
-            << "\nSBAS: " << sbas_num_ 
-            << std::endl;
+  Log();
+  raw_data_.close();
 }
 
 void GalileoParser::CheckSyncHeaders(uint8_t& byte_) {
@@ -62,42 +46,115 @@ bir byte bir byte ilerlemesi yerine hızlı bir şekilde
 seekg ile falan ilerletilebilir
 */
 
-bool GalileoParser::ParseInitialData(std::ifstream& raw_data_) {
+void GalileoParser::ParseInitialData(std::ifstream& raw_data_, MessageType& msg_type) {
   raw_data_.read(reinterpret_cast<char*>(&msg_data),
                  sizeof(msg_data));
 
   if (msg_data.message_class == 0x02 && msg_data.message_id == 0x13){
-    return true;
+    msg_type = UBX_RXM_SFRBX;
+    rxm_sfrbx_counter++;
   }
-  return false;
+  else if (msg_data.message_class == 0x01 && msg_data.message_id == 0x43){
+    msg_type = UBX_NAV_SIG;
+    nav_sig_counter++;
+  } 
+  else msg_type = NOT_DEFINED;
 }
 
 void GalileoParser::ParsePayloadData(std::ifstream& raw_data_) {
-  raw_data_.read(reinterpret_cast<char*>(&payload), sizeof(payload));
-
-  GnssCount(payload);
+  if (msg_type == UBX_RXM_SFRBX){
+    raw_data_.read(reinterpret_cast<char*>(&payload_sfrbx_head), sizeof(payload_sfrbx_head));
+    GnssCount(payload_sfrbx_head);
+  }
+  
+  else if (msg_type == UBX_NAV_SIG){
+    raw_data_.read(reinterpret_cast<char*>(&payload_navsig_head), sizeof(payload_navsig_head));
+    
+    for (int i=0; i<payload_navsig_head.numSigs; i++){      
+      raw_data_.read(reinterpret_cast<char*>(&payload_navsig), sizeof(payload_navsig));
+      GnssCount(payload_navsig);
+    }
+  }
 }
 
-void GalileoParser::GnssCount(NavigationData& payload){
+void GalileoParser::GnssCount(NavigationDataHead& payload){
   switch (payload.gnssId){
+
     case 0:
-      gps_num_++;
+      if (msg_type == UBX_RXM_SFRBX) gps_num_sfrbx_++;
       break;
+
     case 1:
-      sbas_num_++;
+      if (msg_type == UBX_RXM_SFRBX) sbas_num_sfrbx_++;
       break;
+
     case 2:
-      if(payload.numWords == 8) galileo_e1_num++; // galileo total 23504
-      else if(payload.numWords == 9) galileo_e5_num++;
+      if (msg_type == UBX_RXM_SFRBX) galileo_num_sfrbx_++;
       break;
+
     case 3:
-      beidou_num_++;
+      if (msg_type == UBX_RXM_SFRBX) beidou_num_sfrbx_++;
       break;
+
     case 5:
-      qzss_num_++;
+      if (msg_type == UBX_RXM_SFRBX) qzss_num_sfrbx_++;
       break;
+
     case 6:
-      glonass_num_++;
+      if (msg_type == UBX_RXM_SFRBX) glonass_num_sfrbx_++;
+      break;
+
+  } 
+}
+
+
+void GalileoParser::GnssCount(SignalInformation& payload){
+  switch (payload.gnssId){
+
+    case 0:
+      if (msg_type == UBX_NAV_SIG) gps_num_navsig_++;
+      break;
+
+    case 1:
+      if (msg_type == UBX_NAV_SIG) sbas_num_navsig_++;
+      break;
+
+    case 2:
+      if (msg_type == UBX_NAV_SIG) galileo_num_navsig_++;
+      break;
+
+    case 3:
+      if (msg_type == UBX_NAV_SIG) beidou_num_navsig_++;
+      break;
+
+    case 5:
+      if (msg_type == UBX_NAV_SIG) qzss_num_navsig_++;
+      break;
+
+    case 6:
+      if (msg_type == UBX_NAV_SIG) glonass_num_navsig_++;
       break;
   }
+}
+
+
+void GalileoParser::Log(){
+
+  std::cout << "UBX-RXM-SFRBX: " << rxm_sfrbx_counter << std::endl;
+  std::cout << "\nGalileo: " << galileo_num_sfrbx_ 
+            << "\nGPS: " << gps_num_sfrbx_
+            << "\nGLONASS: " << glonass_num_sfrbx_
+            << "\nBeidou: " << beidou_num_sfrbx_
+            << "\nQZSS: " << qzss_num_sfrbx_
+            << "\nSBAS: " << sbas_num_sfrbx_ 
+            << std::endl;  
+
+  std::cout << "\nUBX-NAV-SIG: " << nav_sig_counter << std::endl;
+  std::cout << "\nGalileo: " << galileo_num_navsig_ 
+            << "\nGPS: " << gps_num_navsig_
+            << "\nGLONASS: " << glonass_num_navsig_
+            << "\nBeidou: " << beidou_num_navsig_
+            << "\nQZSS: " << qzss_num_navsig_
+            << "\nSBAS: " << sbas_num_navsig_ 
+            << std::endl;  
 }
