@@ -23,6 +23,15 @@ private:
   unsigned int true_counter = 0;
   unsigned int false_counter = 0;
 
+  unsigned short even_;
+
+  unsigned char dword_buffer_[4];
+  unsigned char big_dword_buffer_[8];
+  unsigned int pos_;
+
+  unsigned long long mask1_ = 0x300FC0000; //3F00C0000000
+  unsigned long long mask2_ = 0x3FFFC0003FFFF; // FFFFC0003FFFC000
+
   enum MessageType { UBX_RXM_SFRBX, UBX_NAV_SIG, NOT_DEFINED } msg_type_;
 
   #pragma pack(1)
@@ -50,6 +59,12 @@ private:
   } payload_data_word_head;
 
 
+  struct WordUtil {
+    unsigned short tail : 6;
+    unsigned short even_odd : 1;
+    unsigned short page_type : 1;
+  } word_util;
+
   /**
    * @brief Word Type 1: Ephemeris (1/4)
    * 
@@ -66,8 +81,7 @@ private:
     unsigned eccentricity : 32;
     unsigned root_semi_major_axis : 32; 
     unsigned reserved : 2;
-    unsigned tail : 6;
-  };
+  } word_type_1;
 
 
   /**
@@ -338,6 +352,105 @@ private:
   };
 
 
+  /**
+   * @brief Word Type 10: Almanac for SVID3 (2/2) 
+   *        and GST-GPS conversion parameters
+   * 
+   * @param longitude Ω0 Longitude of ascending node of orbital plane 
+   *                  at weekly epoch
+   * @param roc_ra Ω^dot Rate of change of right ascension
+   * @param mean_anomaly M0 Satellite mean anomaly at reference time
+   * @param clock_corr_bias af0 Satellite clock correction bias “truncated”
+   * @param clock_corr_linear af1 Satellite clock correction linear “truncated”
+   * @param sig_health_e5b E5bHS Satellite E5b signal health status
+   * @param sig_health_e1 E1-BHS Satellite E1-B/C signal health status
+   * @param const_term_offset A0G Constant term of the polynomial describing the offset
+   * @param roc_offset A1G Rate of change of the offset
+   * @param ref_time t0G Reference time for GGTO data
+   * @param week_num WN0G Week Number of GGTO reference
+   * 
+   */
+  struct WordType10 {
+    unsigned issue_of_data : 4;
+    signed longitude : 16;
+    signed roc_ra : 11;
+    signed mean_anomaly : 16;
+    signed clock_corr_bias : 16;
+    signed clock_corr_linear : 13;
+    unsigned sig_health_e5b : 2;
+    unsigned sig_health_e1 : 2;
+    signed const_term_offset : 16;
+    signed roc_offset : 12;
+    unsigned ref_time : 8;
+    unsigned week_num : 6;
+    unsigned tail : 6;
+  };
+
+
+  /**
+   * @brief Word Type 16: Reduced Clock and Ephemeris Data (CED) parameters
+   * 
+   * @param delta_rced_smajor Difference between the Reduced CED semi-major axis
+   *                   and the nominal semi-major
+   * @param eccentricity_rced_x Reduced CED eccentricity vector component x
+   * @param eccentricity_rced_y Reduced CED eccentricity vector component y
+   * @param delta_rced_inclination Difference between the Reduced CED inclination angle
+   *                               at reference time and the nominal inclination 
+   * @param rced_longitude Reduced CED longitude of ascending node at weekly epoch
+   * @param lambda_rced Reduced CED mean argument of latitude
+   * @param rced_clock_corr_bias Reduced CED satellite clock bias correction coefficient
+   * @param rced_clock_corr_drift Reduced CED satellite clock drift correction coefficient
+   * 
+   * 
+   */
+  struct WordType16 {
+    signed delta_rced_smajor : 5;
+    signed eccentricity_rced_x : 13;
+    signed eccentricity_rced_y : 13;
+    signed delta_rced_inclination : 17;
+    signed rced_longitude : 23;
+    signed lambda_rced : 23;
+    signed rced_clock_corr_bias : 22;
+    signed rced_clock_corr_drift : 6;
+    unsigned tail : 6;
+  };
+
+  
+  /**
+   * @brief Word types 17, 18, 19, 20: FEC2 Reed-Solomon 
+   *        for Clock and Ephemeris Data (CED)
+   * 
+   */
+  struct WordType17{
+    unsigned fec2_1 : 8;
+    unsigned lsb : 2;
+    unsigned long long fec2_2 : 64;
+    unsigned long long fec2_3 : 48;       //112
+    unsigned tail : 6;
+  } word_type_17;
+
+
+  /**
+   * @brief Word Type 0: I/NAV Spare Word
+   * 
+   */
+  struct WordType0 {
+    unsigned time : 2;
+    unsigned long long spare : 64; //88
+    unsigned spare2 : 24; 
+    unsigned week_num : 12;
+    unsigned time_of_week : 20;
+    unsigned tail : 6;
+  };
+
+
+  /**
+   * @brief Word Type 63: Dummy Message
+   * 
+   */
+  struct WordType63 {
+
+  };
 
   struct SignalInformationHead {
     uint32_t iTOW;
@@ -402,10 +515,14 @@ public:
   void CheckSyncHeaders(uint8_t &byte_);
   void ParseInitialData(std::ifstream &raw_data_, MessageType &msg_type);
   bool ParsePayloadData(std::ifstream &raw_data_);
-  void ParseDataWord(std::ifstream &raw_data_);
+  void ParseDataWord(std::ifstream &raw_data_, unsigned int *dword);
+  template <typename T> T* ReadWordToBuffer();
+  template <typename T> T* ReadWordUtilMiddle();
+  template <typename T> T* ReadWordDataMiddle();
   bool DetermineWordType(NavigationDataWordHead &payload_data_word_head);
   void GnssCount(NavigationDataHead &payload);
   void GnssCount(SignalInformation &payload);
+  unsigned int GetBits(unsigned int x, int n);
   void Log() const;
   void Warn() const;
 };

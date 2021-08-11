@@ -1,4 +1,5 @@
 #include "galileo_parser.h"
+#include <bitset>
 
 GalileoParser::GalileoParser(const std::string &path) : file_(path) {}
 
@@ -15,9 +16,9 @@ void GalileoParser::Read() {
     CheckSyncHeaders(byte_);
 
     if (sync_lock_1_ && sync_lock_2_) {
-      counter++;
       ParseInitialData(raw_data_, msg_type_);
       ParsePayloadData(raw_data_);
+      pos_ = 0;
 
       sync_lock_1_ = false;
       sync_lock_2_ = false;
@@ -71,18 +72,32 @@ bool GalileoParser::ParsePayloadData(std::ifstream &raw_data_) {
     if (payload_sfrbx_head.gnssId != 2)
       return false;
 
-    raw_data_.read(reinterpret_cast<char *>(&payload_data_word_head),
+    /*raw_data_.read(reinterpret_cast<char *>(&payload_data_word_head),
                    sizeof(payload_data_word_head));
+
+    std::cout << std::bitset<8>{payload_data_word_head.word_type} << '\n';*/
+
+    unsigned int *dword = ReadWordToBuffer<unsigned int>();
+
+    payload_data_word_head.even_odd = GetBits(*dword, 1);
+    payload_data_word_head.page_type = GetBits(*dword, 1); 
+    payload_data_word_head.word_type = GetBits(*dword, 6);
 
     if (payload_data_word_head.page_type == 1) // Skip alert pages
       return false;
+
+    even_ = payload_data_word_head.even_odd;
+
+    counter++;
 
     bool check_word_type = DetermineWordType(payload_data_word_head);
 
     if (!check_word_type)
       return false;
 
-    ParseDataWord(raw_data_);
+    true_counter++;
+
+    ParseDataWord(raw_data_, dword);
 
     return true;
   }
@@ -165,14 +180,69 @@ bool GalileoParser::DetermineWordType(
 
   default:
     // Warn();
+    false_counter++;
     return false;
   }
 }
 
-void GalileoParser::ParseDataWord(std::ifstream &raw_data_) {
+void GalileoParser::ParseDataWord(std::ifstream &raw_data_, unsigned int *dword_1) {
   if (word_type_ == EPHEMERIS_1){
-    
+    word_type_1.issue_of_data = GetBits(*dword_1, 10);
+    word_type_1.reference_time = GetBits(*dword_1, 14);
+
+    signed int *dword_2 = ReadWordToBuffer<signed int>();
+    word_type_1.mean_anomaly = GetBits(*dword_2, 32);
+
+    unsigned int *dword_3 = ReadWordToBuffer<unsigned int>();
+    word_type_1.eccentricity = GetBits(*dword_3, 32);
+
+    unsigned long long *dword_util = ReadWordUtilMiddle<unsigned long long>();
+    word_util.tail = GetBits(*dword_util, 6);
+    word_util.even_odd = GetBits(*dword_util, 1);
+    word_util.page_type = GetBits(*dword_util, 1);
+
+    if (word_util.tail != 0) Warn();
+
+    if (even_ == 0) { if (word_util.even_odd != 1) Warn(); }
+    if (even_ == 1) { if (word_util.even_odd != 0) Warn(); }
+
+
+    unsigned long long *dword_data = ReadWordDataMiddle<unsigned long long>();
+    word_type_1.root_semi_major_axis = GetBits(*dword_data, 32);
+    word_type_1.reserved = GetBits(*dword_data, 2);
   }
+}
+
+template <typename T>
+T* GalileoParser::ReadWordToBuffer(){
+  pos_ = 0;
+  raw_data_.read(reinterpret_cast<char *>(&dword_buffer_), sizeof(dword_buffer_));
+  T *dword = reinterpret_cast<T *>(dword_buffer_);
+  
+  return dword;
+}
+
+template <typename T>
+T* GalileoParser::ReadWordUtilMiddle(){
+  pos_ = 0;
+  raw_data_.read(reinterpret_cast<char *>(&big_dword_buffer_), sizeof(big_dword_buffer_));
+  T *dword_util = reinterpret_cast<T *>(big_dword_buffer_);
+
+  *dword_util = *dword_util & mask1_;
+  *dword_util = (*dword_util >> 18) | (*dword_util >> 24);
+
+  return dword_util;
+}
+
+template <typename T>
+T* GalileoParser::ReadWordDataMiddle(){
+  pos_ = 0;
+  T *dword_data = reinterpret_cast<T *>(big_dword_buffer_);
+
+  *dword_data = *dword_data & mask2_;
+  *dword_data = (*dword_data) | (*dword_data >> 16);
+
+  return dword_data;
 }
 
 void GalileoParser::GnssCount(NavigationDataHead &payload) {
@@ -275,6 +345,12 @@ void GalileoParser::GnssCount(SignalInformation &payload) {
     Warn();
     break;
   }
+}
+
+unsigned int GalileoParser::GetBits(unsigned int x, int n) {
+  unsigned int res =  (x >> pos_) & ~(~0 << n);
+  pos_ += n;
+  return res;
 }
 
 void GalileoParser::Log() const {
