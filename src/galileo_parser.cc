@@ -65,13 +65,13 @@ bool GalileoParser::ParsePayloadData(std::ifstream &raw_data_) {
     if (payload_sfrbx_head.gnssId != 2)
       return false;
 
-    unsigned int *dword = GetDataWord<unsigned int>();
+    unsigned int dword = GetDataWord<unsigned int>();
 
-    payload_data_word_head.even_odd = GetBits(*dword, 1);
-    payload_data_word_head.page_type = GetBits(*dword, 1);
-    payload_data_word_head.word_type = GetBits(*dword, 6);
+    payload_data_word_head.even_odd = GetBits(dword, 1);
+    payload_data_word_head.page_type = GetBits(dword, 1);
+    payload_data_word_head.word_type = GetBits(dword, 6);
 
-    std::cout << std::bitset<32>{*dword} << std::endl;
+    std::cout << std::bitset<32>{dword} << std::endl;
 
     if (payload_data_word_head.page_type == 1) // Skip alert pages
       return false;
@@ -183,27 +183,27 @@ bool GalileoParser::DetermineWordType(
 }
 
 bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
-                                  unsigned int *dword_1) {
+                                  unsigned int dword_1) {
   if (word_type_ == EPHEMERIS_1) {
 
-    word_type_1.issue_of_data = GetBits(*dword_1, 10);
-    word_type_1.reference_time = GetBits(*dword_1, 14);
+    word_type_1.issue_of_data = GetBits(dword_1, 10);
+    word_type_1.reference_time = GetBits(dword_1, 14);
 
-    signed int *dword_2 = GetDataWord<signed int>();
-    word_type_1.mean_anomaly = GetBits(*dword_2, 32);
+    signed int dword_2 = GetDataWord<signed int>();
+    word_type_1.mean_anomaly = GetBits(dword_2, 32);
 
-    std::cout << "Dword 1: " << std::bitset<32>{*dword_1} << std::endl;
+    std::cout << "Dword 1: " << std::bitset<32>{dword_1} << std::endl;
 
     std::cout << "\n\n";
     sleep(2);
 
-    unsigned int *dword_3 = GetDataWord<unsigned int>();
-    word_type_1.eccentricity = GetBits(*dword_3, 32);
+    unsigned int dword_3 = GetDataWord<unsigned int>();
+    word_type_1.eccentricity = GetBits(dword_3, 32);
 
-    unsigned long long *dword_util = GetWordUtilMiddle<unsigned long long>();
-    word_util.tail = GetBits(*dword_util, 6);
-    word_util.even_odd = GetBits(*dword_util, 1);
-    word_util.page_type = GetBits(*dword_util, 1);
+    unsigned long long dword_util = GetWordUtilMiddle<unsigned long long>();
+    word_util.tail = GetBits(dword_util, 6);
+    word_util.even_odd = GetBits(dword_util, 1);
+    word_util.page_type = GetBits(dword_util, 1);
 
     if (word_util.tail != 0) {
       false_counter++;
@@ -221,24 +221,26 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
       return false;
     }
 
-    unsigned long long *dword_data = GetWordDataMiddle<unsigned long long>();
-    word_type_1.root_semi_major_axis = GetBits(*dword_data, 32);
-    word_type_1.reserved = GetBits(*dword_data, 2); 
+    unsigned long long dword_data = GetWordDataMiddle<unsigned long long>();
+    word_type_1.root_semi_major_axis = GetBits(dword_data, 32);
+    word_type_1.reserved = GetBits(dword_data, 2); 
+
+    sleep(1);
 
     return true;
   }
 
   else if (word_type_ == EPHEMERIS_2) {
 
-    word_type_2.issue_of_data = GetBits(*dword_1, 10);
-    signed longitude_1 = GetBits(*dword_1, 14);
+    word_type_2.issue_of_data = GetBits(dword_1, 10);
+    signed longitude_1 = GetBits(dword_1, 14);
 
-    signed int *dword_2 = GetDataWord<signed int>();
-    signed longitude_2 = GetBits(*dword_2, 18);
-    signed inclination_angle_1 = GetBits(*dword_2, 14);
+    signed int dword_2 = GetDataWord<signed int>();
+    signed longitude_2 = GetBits(dword_2, 18);
+    signed inclination_angle_1 = GetBits(dword_2, 14);
 
-    std::cout << "Dword 1: " << std::bitset<32>{*dword_1} << std::endl;
-    //std::cout << "Dword 2: " << std::bitset<32>{static_cast<unsigned long long>(*dword_2)} << std::endl;
+    std::cout << "Dword 1: " << std::bitset<32>{dword_1} << std::endl;
+    //std::cout << "Dword 2: " << std::bitset<32>{static_cast<unsigned long long>(dword_2)} << std::endl;
     std::cout << "Longitude 1: " << std::bitset<32>{static_cast<unsigned long long>(longitude_1)} << std::endl;
     //std::cout << "Longitude 2: " << std::bitset<32>{static_cast<unsigned long long>(longitude_2)} << std::endl;
     std::cout << raw_data_.tellg() << std::endl;
@@ -248,29 +250,32 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
 
   }
 
+
   return true;
 }
 
-template <typename T> T *GalileoParser::GetDataWord() {
-  char * buffer = new char [4];
-  raw_data_.read(reinterpret_cast<char *>(&buffer),
-                 sizeof(buffer));
+template <typename T> T GalileoParser::GetDataWord() {
   pos_ = 0;
-  T *dword = reinterpret_cast<T *>(buffer);
-  ConvertBits<T>(dword);
+  char * buffer = new char [4];
+  raw_data_.read(buffer, sizeof(buffer));
+  
+  T *dword_ref = reinterpret_cast<T *>(*buffer);
+  T dword = *dword_ref;
+  ConvertBits<T>(&dword);
 
   delete[] buffer;
 
   return dword;
 }
 
-template <typename T> T *GalileoParser::GetWordUtilMiddle() {
+template <typename T> T GalileoParser::GetWordUtilMiddle() {
   pos_ = 0;
   raw_data_.read(reinterpret_cast<char *>(&big_dword_buffer1_),
                  sizeof(big_dword_buffer1_));
-  T *dword_util = reinterpret_cast<T *>(big_dword_buffer1_);
+  T *dword_util_ref = reinterpret_cast<T *>(big_dword_buffer1_);
+  T dword_util = *dword_util_ref;
 
-  ConvertBits<T>(dword_util);
+  ConvertBits<T>(&dword_util);
 
   *dword_util = *dword_util & mask1_;
   *dword_util = (*dword_util << 18) | (*dword_util << 26);
@@ -278,10 +283,12 @@ template <typename T> T *GalileoParser::GetWordUtilMiddle() {
   return dword_util;
 }
 
-template <typename T> T *GalileoParser::GetWordDataMiddle() {
+template <typename T> T GalileoParser::GetWordDataMiddle() {
   pos_ = 0;
-  T *dword_data = reinterpret_cast<T *>(big_dword_buffer2_);
-  ConvertBits(dword_data);
+  T *dword_data_ref = reinterpret_cast<T *>(big_dword_buffer2_);
+  T dword_data = *dword_data_ref;
+
+  ConvertBits(&dword_data);
 
   *dword_data = *dword_data & mask2_;
   *dword_data = (*dword_data) | (*dword_data << 16);
@@ -391,16 +398,16 @@ void GalileoParser::GnssCount(SignalInformation &payload) {
   }
 }
 
-template <typename T> void GalileoParser::ConvertBits(T *x) {
+template <typename T> void GalileoParser::ConvertBits(T &x) {
   if (sizeof(x) == 4)
-    *x =
-        (*x << 24) | ((*x << 8) & 0xFF0000) | ((*x >> 8) & 0xFF00) | (*x >> 24);
+    x =
+        (x << 24) | ((x << 8) & 0xFF0000) | ((x >> 8) & 0xFF00) | (x >> 24);
 
   else if (sizeof(x) == 8)
-    *x = (*x << 56) | ((*x << 40) & 0xFF000000000000) |
-         ((*x << 24) & 0xFF0000000000) | ((*x << 8) & 0xFF00000000) |
-         ((*x >> 8) & 0xFF000000) | ((*x >> 24) & 0xFF0000) |
-         ((*x >> 40) & 0xFF00) | (*x >> 56);
+    x = (x << 56) | ((x << 40) & 0xFF000000000000) |
+         ((x << 24) & 0xFF0000000000) | ((x << 8) & 0xFF00000000) |
+         ((x >> 8) & 0xFF000000) | ((x >> 24) & 0xFF0000) |
+         ((x >> 40) & 0xFF00) | (x >> 56);
 }
 
 template <typename T> T GalileoParser::GetBits(T x, int n) {
