@@ -25,16 +25,19 @@ private:
 
   unsigned short even_;
 
-  unsigned char dword_buffer_[4];
-  unsigned char big_dword_buffer_[8];
+  unsigned char big_dword_buffer1_[8];
+  unsigned char big_dword_buffer2_[8];
+  unsigned char dword_buffer1_[4];
+  unsigned char dword_buffer2_[4];
+  unsigned char dword_buffer3_[4];
   unsigned int pos_;
 
-  unsigned long long mask1_ = 0x300FC0000; //3F00C0000000
-  unsigned long long mask2_ = 0x3FFFC0003FFFF; // FFFFC0003FFFC000
+  unsigned long long mask1_ = 0x3F00C0000000;
+  unsigned long long mask2_ = 0xFFFFC0003FFFC000;
 
   enum MessageType { UBX_RXM_SFRBX, UBX_NAV_SIG, NOT_DEFINED } msg_type_;
 
-  #pragma pack(1)
+#pragma pack(1)
   struct MessageData {
     uint8_t message_class;
     uint8_t message_id;
@@ -51,13 +54,12 @@ private:
     uint8_t version;
     uint8_t reserved1;
   } payload_sfrbx_head;
-  
+
   struct NavigationDataWordHead {
     unsigned short even_odd : 1;
     unsigned short page_type : 1;
     unsigned short word_type : 6;
   } payload_data_word_head;
-
 
   struct WordUtil {
     unsigned short tail : 6;
@@ -67,32 +69,31 @@ private:
 
   /**
    * @brief Word Type 1: Ephemeris (1/4)
-   * 
+   *
    * @param reference_time t0e Ephemeris reference time
    * @param mean_anomaly M0 Mean anomaly at reference time
    * @param eccentricity e Eccentricity
    * @param root_semi_major_axis A1/2 Square root of the semi-major axis
-   * 
+   *
    */
   struct WordType1 {
     unsigned issue_of_data : 10;
     unsigned reference_time : 14;
-    signed mean_anomaly : 32; 
+    signed mean_anomaly : 32;
     unsigned eccentricity : 32;
-    unsigned root_semi_major_axis : 32; 
+    unsigned root_semi_major_axis : 32;
     unsigned reserved : 2;
   } word_type_1;
 
-
   /**
    * @brief Word Type 2: Ephemeris (2/4)
-   * 
+   *
    * @param longitude Ω0 Longitude of ascending node of
    *                  orbital plane at weekly epoch
    * @param inclination_angle i0 Inclination angle at reference time
    * @param perigee ω Argument of perigee
    * @param ia_rate_of_change i^dot Rate of change of inclination angle
-   * 
+   *
    */
   struct WordType2 {
     unsigned issue_of_data : 10;
@@ -102,24 +103,23 @@ private:
     signed ia_rate_of_change : 14;
     unsigned reserved : 2;
     unsigned tail : 6;
-  };
-
+  } word_type_2;
 
   /**
    * @brief Word Type 3: Ephemeris (3/4) and SISA
-   * 
+   *
    * @param ra_rate_of_change Ω^dot Rate of change of right ascension
    * @param mean_motion_difference ∆n Mean motion difference from computed value
-   * @param C_uc Cuc Amplitude of the cosine harmonic correction 
+   * @param C_uc Cuc Amplitude of the cosine harmonic correction
    *             term to the argument of latitude
-   * @param C_us Cus Amplitude of the sine harmonic correction term 
+   * @param C_us Cus Amplitude of the sine harmonic correction term
    *             to the argument of latitude
-   * @param C_rc Crc Amplitude of the cosine harmonic correction 
+   * @param C_rc Crc Amplitude of the cosine harmonic correction
    *             term to the orbit radius
-   * @param C_rs Crs Amplitude of the sine harmonic correction term 
+   * @param C_rs Crs Amplitude of the sine harmonic correction term
    *             to the orbit radius
    * @param sisa SISA Signal-In-Space Accuracy
-   * 
+   *
    */
   struct WordType3 {
     unsigned issue_of_data : 10;
@@ -133,21 +133,20 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
    * @brief Word Type 4: SVID, Ephemeris (4/4),
-   *        and Clock correction parameters 
-   * 
+   *        and Clock correction parameters
+   *
    * @param svid Space Vehicle Identifier
-   * @param C_ic Cic Amplitude of the cosine harmonic correction 
+   * @param C_ic Cic Amplitude of the cosine harmonic correction
    *             term to the angle of inclination
-   * @param C_is Cis Amplitude of the sine harmonic correction term 
+   * @param C_is Cis Amplitude of the sine harmonic correction term
    *             to the angle of inclination
    * @param reference t0c Clock correction data reference Time of Week
    * @param clock_bias_corr af0 SV clock bias correction coefficient
    * @param clock_drift_corr af1 SV clock drift correction coefficient
    * @param clock_drift_rate_corr af2 SV clock drift rate correction coefficient
-   * 
+   *
    */
   struct WordType4 {
     unsigned issue_of_data : 10;
@@ -162,11 +161,10 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
-   * @brief Word Type 5: Ionospheric correction, BGD, 
+   * @brief Word Type 5: Ionospheric correction, BGD,
    * signal health and data validity status and GST
-   * 
+   *
    * @param effionl_0 ai0 Effective Ionisation Level 1st order parameter
    * @param effionl_1 ai1 Effective Ionisation Level 2nd order parameter
    * @param effionl_2 ai2 Effective Ionisation Level 3rd order parameter
@@ -183,7 +181,7 @@ private:
    * @param data_validity_e1 E1-BDVS E1-B Data Validity Status
    * @param week_num WN Week Number
    * @param time_of_week TOW Time of Week
-   * 
+   *
    */
   struct WordType5 {
     unsigned effionl_0 : 11;
@@ -206,10 +204,9 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
    * @brief Word Type 6: GST-UTC conversion parameters
-   * 
+   *
    * @param A0 A0 Constant term of polynomial
    * @param A1 A1 1st order term of polynomial
    * @param ls_count_before ΔtLS Leap Second count before leap
@@ -217,12 +214,12 @@ private:
    * @param utc_reference_tow t0t UTC data reference Time of Week
    * @param utc_reference_week WN0t UTC data reference Week Number
    * @param WN_lsf WNLSF Week Number of leap second adjustment
-   * @param day_num DN Day Number at the end of which a leap second 
-   *                adjustment becomes effective. The value range of 
+   * @param day_num DN Day Number at the end of which a leap second
+   *                adjustment becomes effective. The value range of
    *                DN is from 1 (= Sunday) to 7 (= Saturday).
    * @param ls_count_after ΔtLSF Leap Second count after leap second adjustment
    * @param time_of_week TOW Time of Week
-   * 
+   *
    */
   struct WordType6 {
     signed A0 : 32;
@@ -238,26 +235,25 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
-   * @brief Almanac for SVID1 (1/2), almanac reference time and 
+   * @brief Almanac for SVID1 (1/2), almanac reference time and
    *        almanac reference week number
-   * 
+   *
    * @param week_num WNa Almanac reference Week Number
    * @param ref_time t0a Almanac reference time
    * @param svid_1 SVID Satellite ID (1 constellation of 36 satellites)
-   * @param delta_root_a Δ(A1/2) Difference between the square root of the 
-   *                     semi-major axis and the square root of the 
-   *                     nominal semi-major axis      
-   * @param eccentricity Eccentricity 
+   * @param delta_root_a Δ(A1/2) Difference between the square root of the
+   *                     semi-major axis and the square root of the
+   *                     nominal semi-major axis
+   * @param eccentricity Eccentricity
    * @param perigee ω Argument of perigee
-   * @param diff_ia_na δi Difference between the inclination angle at 
-   *                   reference time and the nominal inclination 
-   * @param longitude Ω0 Longitude of ascending node of orbital plane 
+   * @param diff_ia_na δi Difference between the inclination angle at
+   *                   reference time and the nominal inclination
+   * @param longitude Ω0 Longitude of ascending node of orbital plane
    *                  at weekly epoch
    * @param roc_ra Ω^dot Rate of change of right ascension
    * @param mean_anomaly M0 Satellite mean anomaly at reference time
-   * 
+   *
    */
   struct WordType7 {
     unsigned issue_of_data : 4;
@@ -275,26 +271,25 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
    * @brief Word Type 8: Almanac for SVID1 (2/2) and SVID2 (1/2))
-   * 
+   *
    * @param clock_corr_bias af0 Satellite clock correction bias “truncated”
    * @param clock_corr_linear af1 Satellite clock correction linear “truncated”
-   * @param sig_health_e5b E5bHS Satellite E5b signal health status 
+   * @param sig_health_e5b E5bHS Satellite E5b signal health status
    * @param sig_health_e1 E1-BHS Satellite E1-B/C signal health status
    * @param svid_2 SVID Satellite ID (1 constellation of 36 satellites)
-   * @param delta_root_a Δ(A1/2) Difference between the square root of the 
-   *                   semi-major axis and the square root of the 
+   * @param delta_root_a Δ(A1/2) Difference between the square root of the
+   *                   semi-major axis and the square root of the
    *                   nominal semi-major axis
    * @param eccentricity e Eccentricity
    * @param perigee ω Argument of perigee
-   * @param diff_ia_na δi Difference between the inclination angle at 
+   * @param diff_ia_na δi Difference between the inclination angle at
    *                   reference time and the nominal inclination
-   * @param longitude Ω0 Longitude of ascending node of orbital plane 
-   *                  at weekly epoch   
-   * @param roc_ra Ω^dot Rate of change of right ascension  
-   * 
+   * @param longitude Ω0 Longitude of ascending node of orbital plane
+   *                  at weekly epoch
+   * @param roc_ra Ω^dot Rate of change of right ascension
+   *
    */
   struct WordType8 {
     unsigned issue_of_data : 4;
@@ -313,10 +308,9 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
    * @brief Word Type 9: Almanac for SVID2 (2/2) and SVID3 (1/2))
-   * 
+   *
    * @param week_num WNa Almanac reference Week Number
    * @param ref_time t0a Almanac reference time
    * @param mean_anomaly M0 Satellite mean anomaly at reference time
@@ -325,14 +319,14 @@ private:
    * @param sig_health_e5b Satellite E5b signal health status
    * @param sig_health_e1 E1-BHS Satellite E1-B/C signal health status
    * @param svid_3 SVID Satellite ID (1 constellation of 36 satellites)
-   * @param delta_root_a Δ(A1/2) Difference between the square root of the 
-   *                     semi-major axis and the square root of the 
+   * @param delta_root_a Δ(A1/2) Difference between the square root of the
+   *                     semi-major axis and the square root of the
    *                     nominal semi-major axis
    * @param eccentricity e Eccentricity
    * @param perigee ω Argument of perigee
-   * @param diff_ia_na δi Difference between the inclination angle at 
+   * @param diff_ia_na δi Difference between the inclination angle at
    *                   reference time and the nominal inclination
-   * 
+   *
    */
   struct WordType9 {
     unsigned issue_of_data : 4;
@@ -351,12 +345,11 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
-   * @brief Word Type 10: Almanac for SVID3 (2/2) 
+   * @brief Word Type 10: Almanac for SVID3 (2/2)
    *        and GST-GPS conversion parameters
-   * 
-   * @param longitude Ω0 Longitude of ascending node of orbital plane 
+   *
+   * @param longitude Ω0 Longitude of ascending node of orbital plane
    *                  at weekly epoch
    * @param roc_ra Ω^dot Rate of change of right ascension
    * @param mean_anomaly M0 Satellite mean anomaly at reference time
@@ -364,11 +357,12 @@ private:
    * @param clock_corr_linear af1 Satellite clock correction linear “truncated”
    * @param sig_health_e5b E5bHS Satellite E5b signal health status
    * @param sig_health_e1 E1-BHS Satellite E1-B/C signal health status
-   * @param const_term_offset A0G Constant term of the polynomial describing the offset
+   * @param const_term_offset A0G Constant term of the polynomial describing the
+   * offset
    * @param roc_offset A1G Rate of change of the offset
    * @param ref_time t0G Reference time for GGTO data
    * @param week_num WN0G Week Number of GGTO reference
-   * 
+   *
    */
   struct WordType10 {
     unsigned issue_of_data : 4;
@@ -386,22 +380,24 @@ private:
     unsigned tail : 6;
   };
 
-
   /**
    * @brief Word Type 16: Reduced Clock and Ephemeris Data (CED) parameters
-   * 
+   *
    * @param delta_rced_smajor Difference between the Reduced CED semi-major axis
    *                   and the nominal semi-major
    * @param eccentricity_rced_x Reduced CED eccentricity vector component x
    * @param eccentricity_rced_y Reduced CED eccentricity vector component y
-   * @param delta_rced_inclination Difference between the Reduced CED inclination angle
-   *                               at reference time and the nominal inclination 
-   * @param rced_longitude Reduced CED longitude of ascending node at weekly epoch
+   * @param delta_rced_inclination Difference between the Reduced CED
+   * inclination angle at reference time and the nominal inclination
+   * @param rced_longitude Reduced CED longitude of ascending node at weekly
+   * epoch
    * @param lambda_rced Reduced CED mean argument of latitude
-   * @param rced_clock_corr_bias Reduced CED satellite clock bias correction coefficient
-   * @param rced_clock_corr_drift Reduced CED satellite clock drift correction coefficient
-   * 
-   * 
+   * @param rced_clock_corr_bias Reduced CED satellite clock bias correction
+   * coefficient
+   * @param rced_clock_corr_drift Reduced CED satellite clock drift correction
+   * coefficient
+   *
+   *
    */
   struct WordType16 {
     signed delta_rced_smajor : 5;
@@ -415,42 +411,37 @@ private:
     unsigned tail : 6;
   };
 
-  
   /**
-   * @brief Word types 17, 18, 19, 20: FEC2 Reed-Solomon 
+   * @brief Word types 17, 18, 19, 20: FEC2 Reed-Solomon
    *        for Clock and Ephemeris Data (CED)
-   * 
+   *
    */
-  struct WordType17{
+  struct WordType17 {
     unsigned fec2_1 : 8;
     unsigned lsb : 2;
     unsigned long long fec2_2 : 64;
-    unsigned long long fec2_3 : 48;       //112
+    unsigned long long fec2_3 : 48; // 112
     unsigned tail : 6;
   } word_type_17;
 
-
   /**
    * @brief Word Type 0: I/NAV Spare Word
-   * 
+   *
    */
   struct WordType0 {
     unsigned time : 2;
-    unsigned long long spare : 64; //88
-    unsigned spare2 : 24; 
+    unsigned long long spare : 64; // 88
+    unsigned spare2 : 24;
     unsigned week_num : 12;
     unsigned time_of_week : 20;
     unsigned tail : 6;
   };
 
-
   /**
    * @brief Word Type 63: Dummy Message
-   * 
+   *
    */
-  struct WordType63 {
-
-  };
+  struct WordType63 {};
 
   struct SignalInformationHead {
     uint32_t iTOW;
@@ -472,7 +463,7 @@ private:
     unsigned int sigFlags : 16;
     uint32_t reserved1;
   } payload_navsig;
-  #pragma pack()
+#pragma pack()
 
   enum WordType {
     SPARE,
@@ -487,9 +478,9 @@ private:
     ALMANAC_3,
     ALMANAC_4,
     REDUCED_CED = 16,
-    FEC2, 
+    FEC2,
     DUMMY = 63
-  }word_type_;
+  } word_type_;
 
   unsigned int galileo_num_sfrbx_ = 0;
   unsigned int gps_num_sfrbx_ = 0;
@@ -515,14 +506,15 @@ public:
   void CheckSyncHeaders(uint8_t &byte_);
   void ParseInitialData(std::ifstream &raw_data_, MessageType &msg_type);
   bool ParsePayloadData(std::ifstream &raw_data_);
-  void ParseDataWord(std::ifstream &raw_data_, unsigned int *dword);
-  template <typename T> T* ReadWordToBuffer();
-  template <typename T> T* ReadWordUtilMiddle();
-  template <typename T> T* ReadWordDataMiddle();
+  bool ParseDataWord(std::ifstream &raw_data_, unsigned int *dword);
+  template <typename T> T *GetDataWord();
+  template <typename T> T *GetWordUtilMiddle();
+  template <typename T> T *GetWordDataMiddle();
   bool DetermineWordType(NavigationDataWordHead &payload_data_word_head);
   void GnssCount(NavigationDataHead &payload);
   void GnssCount(SignalInformation &payload);
-  unsigned int GetBits(unsigned int x, int n);
+  template <typename T> void ConvertBits(T *x);
+  template <typename T> T GetBits(T x, int n);
   void Log() const;
   void Warn() const;
 };

@@ -4,7 +4,15 @@
 
 
 unsigned int getbits(unsigned int x, int p, int n) {
-    return (x >> p) & ~(~0 << n);
+    unsigned int res = (x << p) & (~0 << (32-n));
+    std::cout << std::bitset<32>{res} << '\n';
+    res = (res >> (32-n));
+    std::cout << std::bitset<32>{res} << '\n';
+    return res;
+}
+
+void convert(unsigned int* a) {
+    *a = (*a << 24) | ((*a << 8) & 0xFF0000) | ((*a >> 8) & 0xFF00) | (*a >> 24);
 }
 
 int main() {
@@ -19,13 +27,15 @@ int main() {
     }
 
     unsigned int *deneme = reinterpret_cast<unsigned int *>(&buffer);
+    convert(deneme);
+
     std::cout << std::bitset<32>{*deneme} << '\n';
 
-    unsigned int a = getbits(*deneme, 2, 6);
+    unsigned int b = getbits(*deneme, 2, 6);
 
-    std::cout << std::bitset<8>{a} << '\n';
+    std::cout << std::bitset<8>{b} << '\n';
 
-    std::cout << a << std::endl;
+    std::cout << b << std::endl;
 
     std::cout << "Size: " << sizeof(*deneme) << std::endl;
 
