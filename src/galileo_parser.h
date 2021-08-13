@@ -124,7 +124,6 @@ private:
     signed C_rc : 16;
     signed C_rs : 16;
     unsigned sisa : 8;
-    unsigned tail : 6;
   } word_type_3;
 
   /**
@@ -152,8 +151,7 @@ private:
     signed clock_drift_corr : 21;
     signed clock_drift_rate_corr : 6;
     unsigned spare : 2;
-    unsigned tail : 6;
-  };
+  } word_type_4;
 
   /**
    * @brief Word Type 5: Ionospheric correction, BGD,
@@ -195,8 +193,7 @@ private:
     unsigned week_num : 12;
     unsigned time_of_week : 20;
     unsigned spare : 23;
-    unsigned tail : 6;
-  };
+  } word_type_5;
 
   /**
    * @brief Word Type 6: GST-UTC conversion parameters
@@ -225,9 +222,8 @@ private:
     unsigned day_num : 3;
     signed ls_count_after : 8;
     unsigned time_of_week : 20;
-    unsigned spare : 8;
-    unsigned tail : 6;
-  };
+    unsigned spare : 3;
+  } word_type_6;
 
   /**
    * @brief Almanac for SVID1 (1/2), almanac reference time and
@@ -262,8 +258,7 @@ private:
     signed roc_ra : 11;
     signed mean_anomaly : 16;
     unsigned reserved : 6;
-    unsigned tail : 6;
-  };
+  } word_type_7;
 
   /**
    * @brief Word Type 8: Almanac for SVID1 (2/2) and SVID2 (1/2))
@@ -299,8 +294,7 @@ private:
     signed longitude : 16;
     signed roc_ra : 11;
     unsigned spare : 1;
-    unsigned tail : 6;
-  };
+  } word_type_8;
 
   /**
    * @brief Word Type 9: Almanac for SVID2 (2/2) and SVID3 (1/2))
@@ -336,8 +330,7 @@ private:
     unsigned eccentricity : 11;
     signed perigee : 16;
     signed diff_ia_na : 11;
-    unsigned tail : 6;
-  };
+  } word_type_9;
 
   /**
    * @brief Word Type 10: Almanac for SVID3 (2/2)
@@ -371,14 +364,13 @@ private:
     signed roc_offset : 12;
     unsigned ref_time : 8;
     unsigned week_num : 6;
-    unsigned tail : 6;
-  };
+  } word_type_10;
 
   /**
    * @brief Word Type 16: Reduced Clock and Ephemeris Data (CED) parameters
    *
    * @param delta_rced_smajor Difference between the Reduced CED semi-major axis
-   *                   and the nominal semi-major
+   *                          and the nominal semi-major
    * @param eccentricity_rced_x Reduced CED eccentricity vector component x
    * @param eccentricity_rced_y Reduced CED eccentricity vector component y
    * @param delta_rced_inclination Difference between the Reduced CED
@@ -402,8 +394,7 @@ private:
     signed lambda_rced : 23;
     signed rced_clock_corr_bias : 22;
     signed rced_clock_corr_drift : 6;
-    unsigned tail : 6;
-  };
+  } word_type_16;
 
   /**
    * @brief Word types 17, 18, 19, 20: FEC2 Reed-Solomon
@@ -415,7 +406,6 @@ private:
     unsigned lsb : 2;
     unsigned long long fec2_2 : 64;
     unsigned long long fec2_3 : 48; // 112
-    unsigned tail : 6;
   } word_type_17;
 
   /**
@@ -428,8 +418,7 @@ private:
     unsigned spare2 : 24;
     unsigned week_num : 12;
     unsigned time_of_week : 20;
-    unsigned tail : 6;
-  };
+  } word_type_0;
 
   /**
    * @brief Word Type 63: Dummy Message
