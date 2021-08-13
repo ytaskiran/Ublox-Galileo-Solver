@@ -25,11 +25,6 @@ private:
 
   unsigned short even_;
 
-  unsigned char big_dword_buffer1_[8];
-  unsigned char big_dword_buffer2_[8];
-  unsigned char dword_buffer1_[4];
-  unsigned char dword_buffer2_[4];
-  unsigned char dword_buffer3_[4];
   unsigned int pos_;
 
   unsigned long long mask1_ = 0x3F00C0000000;
@@ -102,7 +97,6 @@ private:
     signed perigee : 32;
     signed ia_rate_of_change : 14;
     unsigned reserved : 2;
-    unsigned tail : 6;
   } word_type_2;
 
   /**
@@ -131,7 +125,7 @@ private:
     signed C_rs : 16;
     unsigned sisa : 8;
     unsigned tail : 6;
-  };
+  } word_type_3;
 
   /**
    * @brief Word Type 4: SVID, Ephemeris (4/4),
@@ -508,13 +502,15 @@ public:
   bool ParsePayloadData(std::ifstream &raw_data_);
   bool ParseDataWord(std::ifstream &raw_data_, unsigned int dword);
   template <typename T> T GetDataWord();
-  template <typename T> T GetWordUtilMiddle();
-  template <typename T> T GetWordDataMiddle();
+  template <typename T> T GetWordMiddle();
+  template <typename T> void MaskWordUtilMiddle(T& dword_util);
+  template <typename T> void MaskWordDataMiddle(T& dword_data);
   bool DetermineWordType(NavigationDataWordHead &payload_data_word_head);
   void GnssCount(NavigationDataHead &payload);
   void GnssCount(SignalInformation &payload);
-  template <typename T> void ConvertBits(T &x);
+  template <typename T> void ConvertBits(T& x);
   template <typename T> T GetBits(T x, int n);
+  template <typename T> T ConcatenateBits(T data1, T data2, int size1, int size2);
   void Log() const;
   void Warn() const;
 };
