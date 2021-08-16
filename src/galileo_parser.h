@@ -39,6 +39,11 @@ private:
     uint16_t length;
   } msg_data;
 
+  struct CheckSumParams {
+    uint8_t ck_a;
+    uint8_t ck_b;
+  } checksum;
+
   struct NavigationDataHead {
     uint8_t gnssId;
     uint8_t svId;
@@ -482,11 +487,65 @@ private:
   unsigned int rxm_sfrbx_counter = 0;
   unsigned int nav_sig_counter = 0;
 
+  unsigned int svid1_counter = 0;
+  unsigned int svid2_counter = 0;
+  unsigned int svid3_counter = 0;
+  unsigned int svid4_counter = 0;
+  unsigned int svid5_counter = 0;
+  unsigned int svid6_counter = 0;
+  unsigned int svid7_counter = 0;
+  unsigned int svid8_counter = 0;
+  unsigned int svid9_counter = 0;
+  unsigned int svid10_counter = 0;
+  unsigned int svid11_counter = 0;
+  unsigned int svid12_counter = 0;
+  unsigned int svid13_counter = 0;
+  unsigned int svid14_counter = 0;
+  unsigned int svid15_counter = 0;
+  unsigned int svid16_counter = 0;
+  unsigned int svid17_counter = 0;
+  unsigned int svid18_counter = 0;
+  unsigned int svid19_counter = 0;
+  unsigned int svid20_counter = 0;
+  unsigned int svid21_counter = 0;
+  unsigned int svid22_counter = 0;
+  unsigned int svid23_counter = 0;
+  unsigned int svid24_counter = 0;
+  unsigned int svid25_counter = 0;
+  unsigned int svid26_counter = 0;
+  unsigned int svid27_counter = 0;
+  unsigned int svid28_counter = 0;
+  unsigned int svid29_counter = 0;
+  unsigned int svid30_counter = 0;
+  unsigned int svid31_counter = 0;
+  unsigned int svid32_counter = 0;
+  unsigned int svid33_counter = 0;
+  unsigned int svid34_counter = 0;
+  unsigned int svid35_counter = 0;
+  unsigned int svid36_counter = 0;
+
+  unsigned int wordtype0_counter = 0;
+  unsigned int wordtype1_counter = 0;
+  unsigned int wordtype2_counter = 0;
+  unsigned int wordtype3_counter = 0;
+  unsigned int wordtype4_counter = 0;
+  unsigned int wordtype5_counter = 0;
+  unsigned int wordtype6_counter = 0;
+  unsigned int wordtype7_counter = 0;
+  unsigned int wordtype8_counter = 0;
+  unsigned int wordtype9_counter = 0;
+  unsigned int wordtype10_counter = 0;
+  unsigned int wordtype16_counter = 0;
+  unsigned int wordtype17_counter = 0;
+  unsigned int wordtype63_counter = 0;
+
+
 public:
   explicit GalileoParser(const std::string &path);
 
   void Read();
   void CheckSyncHeaders(uint8_t &byte_);
+  bool CheckSum(std::ifstream &raw_data_);
   void ParseInitialData(std::ifstream &raw_data_, MessageType &msg_type);
   bool ParsePayloadData(std::ifstream &raw_data_);
   bool ParseDataWord(std::ifstream &raw_data_, unsigned int dword);
@@ -497,6 +556,7 @@ public:
   bool DetermineWordType(NavigationDataWordHead &payload_data_word_head);
   void GnssCount(NavigationDataHead &payload);
   void GnssCount(SignalInformation &payload);
+  void ClassifySvid();
   template <typename T> void ConvertBits(T& x);
   template <typename T> T GetBits(T x, int n);
   template <typename T> T ConcatenateBits(T data1, T data2, int size1, int size2);

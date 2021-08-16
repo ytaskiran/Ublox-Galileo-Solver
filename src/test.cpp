@@ -17,14 +17,29 @@ void convert(unsigned int* a) {
 
 int main() {
 
-    unsigned char buffer[4];
+    unsigned char buffer[10];
     std::ifstream data("../data/COM3_210730_115228.ubx", std::ios::binary);
 
     data.read(reinterpret_cast<char *>(&buffer), sizeof(buffer));
 
-    for (int i=0; i<4; i++){
+    for (int i=0; i<10; i++){
         std::cout << (int)buffer[i] << "\t" << std::bitset<8>{buffer[i]} <<std::endl;
     }
+
+    std::cout << "\n\n\n";
+
+    data.seekg(-4, std::ios::cur);
+
+    data.read(reinterpret_cast<char *>(&buffer), sizeof(buffer));
+
+    for (int i=0; i<10; i++){
+        std::cout << (int)buffer[i] << "\t" << std::bitset<8>{buffer[i]} <<std::endl;
+    }
+
+
+
+
+    /*
 
     unsigned int *deneme = reinterpret_cast<unsigned int *>(&buffer);
     convert(deneme);
@@ -38,6 +53,8 @@ int main() {
     std::cout << b << std::endl;
 
     std::cout << "Size: " << sizeof(*deneme) << std::endl;
+
+    */
 
 
     return 0;

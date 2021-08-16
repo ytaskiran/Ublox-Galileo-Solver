@@ -42,7 +42,7 @@ void GalileoParser::CheckSyncHeaders(uint8_t &byte_) {
 }
 
 void GalileoParser::ParseInitialData(std::ifstream &raw_data_,
-                                     MessageType &msg_type_) {
+                                     MessageType &msg_type_) { // second argument seems unnecessary
   raw_data_.read(reinterpret_cast<char *>(&msg_data), sizeof(msg_data));
 
   if (msg_data.message_class == 0x02 && msg_data.message_id == 0x13) {
@@ -55,8 +55,37 @@ void GalileoParser::ParseInitialData(std::ifstream &raw_data_,
     msg_type_ = NOT_DEFINED;
 }
 
+bool GalileoParser::CheckSum(std::ifstream &raw_data_){
+  raw_data_.seekg(-4, std::ios::cur);
+
+  char *buffer = new char[msg_data.length + 4];
+  raw_data_.read(buffer, (msg_data.length + 4));
+
+  uint8_t ck_a = 0;
+  uint8_t ck_b = 0;
+
+  for (int i=0; i<(msg_data.length+4); i++) {
+    ck_a = ck_a + buffer[i];
+    ck_b = ck_b + ck_a;
+  }
+
+  raw_data_.read(reinterpret_cast<char *>(&checksum), sizeof(checksum));
+  raw_data_.seekg(-(msg_data.length + 2), std::ios::cur);
+
+  delete[] buffer;
+
+  if (ck_a == checksum.ck_a && ck_b == checksum.ck_b) return true;
+  else {
+    std::cout << "checksum false" << std::endl; 
+    return false;
+  }
+}
+
 bool GalileoParser::ParsePayloadData(std::ifstream &raw_data_) {
   if (msg_type_ == UBX_RXM_SFRBX) {
+    
+    if (!CheckSum(raw_data_)) {false_counter++; return false;}
+
     raw_data_.read(reinterpret_cast<char *>(&payload_sfrbx_head),
                    sizeof(payload_sfrbx_head));
 
@@ -76,6 +105,8 @@ bool GalileoParser::ParsePayloadData(std::ifstream &raw_data_) {
 
     counter++;
     even_ = payload_data_word_head.even_odd;
+
+    ClassifySvid();
 
     if (!DetermineWordType(payload_data_word_head))
       return false;
@@ -107,74 +138,91 @@ bool GalileoParser::DetermineWordType(
   switch (payload_data_word_head.word_type) {
   case 0:
     word_type_ = SPARE;
+    ++wordtype0_counter;
     return true;
 
   case 1:
     word_type_ = EPHEMERIS_1;
+    ++wordtype1_counter;
     return true;
 
   case 2:
     word_type_ = EPHEMERIS_2;
+    ++wordtype2_counter;
     return true;
 
   case 3:
     word_type_ = EPHEMERIS_3;
+    ++wordtype3_counter;
     return true;
 
   case 4:
     word_type_ = EPHEMERIS_4__CLOCK_CORRECTION;
+    ++wordtype4_counter;
     return true;
 
   case 5:
     word_type_ = IONOSPHERIC_CORRECTION__BGD__SIG_HEALTH__DVS__GST;
+    ++wordtype5_counter;
     return true;
 
   case 6:
     word_type_ = GST_UTC_CONVERSION;
+    ++wordtype6_counter;
     return true;
 
   case 7:
     word_type_ = ALMANAC_1;
+    ++wordtype7_counter;
     return true;
 
   case 8:
     word_type_ = ALMANAC_2;
+    ++wordtype8_counter;
     return true;
 
   case 9:
     word_type_ = ALMANAC_3;
+    ++wordtype9_counter;
     return true;
 
   case 10:
     word_type_ = ALMANAC_4;
+    ++wordtype10_counter;
     return true;
 
   case 16:
     word_type_ = REDUCED_CED;
+    ++wordtype16_counter;
     return true;
 
   case 17:
     word_type_ = FEC2;
+    ++wordtype17_counter;
     return true;
 
   case 18:
     word_type_ = FEC2;
+    ++wordtype17_counter;
     return true;
 
   case 19:
     word_type_ = FEC2;
+    ++wordtype17_counter;
     return true;
 
   case 20:
     word_type_ = FEC2;
+    ++wordtype17_counter;
     return true;
 
   case 63:
     word_type_ = DUMMY;
+    ++wordtype63_counter;
     return true;
 
   default:
-    // Warn();
+    Warn();
     false_counter++;
     return false;
   }
@@ -182,7 +230,7 @@ bool GalileoParser::DetermineWordType(
 
 bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
                                   unsigned int dword_1) {
-  if (word_type_ == EPHEMERIS_1) {
+  if (word_type_ == EPHEMERIS_1) { // Word Type 1
 
     word_type_1.issue_of_data = GetBits(dword_1, 10);
     word_type_1.reference_time = GetBits(dword_1, 14);
@@ -193,8 +241,11 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned int dword_3 = GetDataWord<unsigned int>();
     word_type_1.eccentricity = GetBits(dword_3, 32);
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
-    
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
+
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
@@ -207,13 +258,13 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     }
 
     if (even_ == 0) {
-      if (word_util.even_odd != 1){
+      if (word_util.even_odd != 1) {
         false_counter++;
         return false;
       }
     }
     if (even_ == 1) {
-      if (word_util.even_odd != 0){
+      if (word_util.even_odd != 0) {
         false_counter++;
         return false;
       }
@@ -222,12 +273,12 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
     word_type_1.root_semi_major_axis = GetBits(dword_data, 32);
-    word_type_1.reserved = GetBits(dword_data, 2); 
+    word_type_1.reserved = GetBits(dword_data, 2);
 
     return true;
   }
 
-  else if (word_type_ == EPHEMERIS_2) {
+  else if (word_type_ == EPHEMERIS_2) { // Word Type 2
 
     word_type_2.issue_of_data = GetBits(dword_1, 10);
     signed longitude_1 = GetBits(dword_1, 14);
@@ -235,26 +286,26 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned int dword_2 = GetDataWord<unsigned int>();
     signed longitude_2 = GetBits(dword_2, 18);
     signed inclination_angle_1 = GetBits(dword_2, 14);
-    
+
     word_type_2.longitude = ConcatenateBits(longitude_1, longitude_2, 14, 18);
 
     unsigned int dword_3 = GetDataWord<unsigned int>();
     signed inclination_angle_2 = GetBits(dword_3, 18);
     signed perigee_1 = GetBits(dword_3, 14);
 
-    word_type_2.inclination_angle = ConcatenateBits(inclination_angle_1,
-                                                    inclination_angle_2,
-                                                    14,
-                                                    18);
+    word_type_2.inclination_angle =
+        ConcatenateBits(inclination_angle_1, inclination_angle_2, 14, 18);
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
-    
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
+
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
-
 
     if (word_util.tail != 0) {
       false_counter++;
@@ -262,13 +313,13 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     }
 
     if (even_ == 0) {
-      if (word_util.even_odd != 1){
+      if (word_util.even_odd != 1) {
         false_counter++;
         return false;
       }
     }
     if (even_ == 1) {
-      if (word_util.even_odd != 0){
+      if (word_util.even_odd != 0) {
         false_counter++;
         return false;
       }
@@ -278,18 +329,14 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     MaskWordDataMiddle(dword_data);
     signed perigee_2 = GetBits(dword_data, 18);
     word_type_2.ia_rate_of_change = GetBits(dword_data, 14);
-    word_type_2.reserved = GetBits(dword_data, 2); 
+    word_type_2.reserved = GetBits(dword_data, 2);
 
-    word_type_2.perigee = ConcatenateBits(perigee_1,
-                                          perigee_2,
-                                          14,
-                                          18);
+    word_type_2.perigee = ConcatenateBits(perigee_1, perigee_2, 14, 18);
 
     return true;
   }
 
-
-  else if (word_type_ == EPHEMERIS_3) {
+  else if (word_type_ == EPHEMERIS_3) { // Word Type 3
 
     unsigned issue_of_data = GetBits(dword_1, 10);
     signed ra_rate_of_change_1 = GetBits(dword_1, 14);
@@ -304,13 +351,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed C_us = GetBits(dword_3, 16);
     signed C_rc_1 = GetBits(dword_3, 6);
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
-    
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
+
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -319,28 +387,19 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned sisa = GetBits(dword_data, 8);
 
     word_type_3.issue_of_data = issue_of_data;
-    word_type_3.ra_rate_of_change = ConcatenateBits(ra_rate_of_change_1,
-                                                    ra_rate_of_change_2,
-                                                    14,
-                                                    10);
+    word_type_3.ra_rate_of_change =
+        ConcatenateBits(ra_rate_of_change_1, ra_rate_of_change_2, 14, 10);
     word_type_3.mean_motion_difference = mean_motion_difference;
-    word_type_3.C_uc = ConcatenateBits(C_uc_1, 
-                                       C_uc_2,
-                                       6,
-                                       10);
+    word_type_3.C_uc = ConcatenateBits(C_uc_1, C_uc_2, 6, 10);
     word_type_3.C_us = C_us;
-    word_type_3.C_rc = ConcatenateBits(C_rc_1,
-                                       C_rc_2,
-                                       6,
-                                       10);
+    word_type_3.C_rc = ConcatenateBits(C_rc_1, C_rc_2, 6, 10);
     word_type_3.C_rs = C_rs;
     word_type_3.sisa = sisa;
 
     return true;
   }
 
-
-  else if (word_type_ == EPHEMERIS_4__CLOCK_CORRECTION) {
+  else if (word_type_ == EPHEMERIS_4__CLOCK_CORRECTION) { // Word Type 4
 
     unsigned issue_of_data = GetBits(dword_1, 10);
     unsigned svid = GetBits(dword_1, 6);
@@ -355,13 +414,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned reference_2 = GetBits(dword_3, 6);
     signed clock_bias_corr_1 = GetBits(dword_3, 26); // 5 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
-    
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
+
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -375,9 +455,8 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_4.C_ic = ConcatenateBits(C_ic_1, C_ic_2, 8, 8);
     word_type_4.C_is = C_is;
     word_type_4.reference = ConcatenateBits(reference_1, reference_2, 8, 6);
-    word_type_4.clock_bias_corr = ConcatenateBits(clock_bias_corr_1,
-                                                  clock_bias_corr_2, 
-                                                  26, 5);
+    word_type_4.clock_bias_corr =
+        ConcatenateBits(clock_bias_corr_1, clock_bias_corr_2, 26, 5);
     word_type_4.clock_drift_corr = clock_drift_corr;
     word_type_4.clock_drift_rate_corr = clock_drift_rate_corr;
     word_type_4.spare = spare;
@@ -385,8 +464,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-
-  else if (word_type_ == IONOSPHERIC_CORRECTION__BGD__SIG_HEALTH__DVS__GST) {
+  else if (word_type_ == IONOSPHERIC_CORRECTION__BGD__SIG_HEALTH__DVS__GST) { // Word Type 5
 
     unsigned effionl_0 = GetBits(dword_1, 11);
     signed effionl_1 = GetBits(dword_1, 11);
@@ -411,13 +489,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned week_num = GetBits(dword_3, 12);
     unsigned time_of_week_1 = GetBits(dword_3, 9); // 11 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -439,15 +538,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_5.data_validity_e5b = data_validity_e5b;
     word_type_5.data_validity_e1 = data_validity_e1;
     word_type_5.week_num = week_num;
-    word_type_5.time_of_week = ConcatenateBits(time_of_week_1, time_of_week_2, 9, 11);
+    word_type_5.time_of_week =
+        ConcatenateBits(time_of_week_1, time_of_week_2, 9, 11);
     word_type_5.spare = spare;
 
     return true;
   }
 
+  else if (word_type_ == GST_UTC_CONVERSION) { // Word Type 6
 
-  else if (word_type_ == GST_UTC_CONVERSION) {
-    
     signed A0_1 = GetBits(dword_1, 24); // 8 left
 
     unsigned int dword_2 = GetDataWord<unsigned int>();
@@ -460,7 +559,10 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned utc_reference_week = GetBits(dword_3, 8);
     unsigned WN_lsf = GetBits(dword_3, 8);
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
@@ -468,13 +570,30 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
 
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
+
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
     unsigned day_num = GetBits(dword_data, 3);
     signed ls_count_after = GetBits(dword_data, 8);
     unsigned time_of_week = GetBits(dword_data, 20);
     unsigned spare = GetBits(dword_data, 3);
-
 
     word_type_6.A0 = ConcatenateBits(A0_1, A0_2, 24, 8);
     word_type_6.A1 = A1;
@@ -490,32 +609,52 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-
-  else if (word_type_ == ALMANAC_1) {
+  else if (word_type_ == ALMANAC_1) { // Word Type 7
 
     unsigned issue_of_data = GetBits(dword_1, 4);
     unsigned week_num = GetBits(dword_1, 2);
     unsigned ref_time = GetBits(dword_1, 10);
     unsigned svid_1 = GetBits(dword_1, 6);
-    signed delta_root_a_1 = GetBits(dword_1, 2); // 11 left 
+    signed delta_root_a_1 = GetBits(dword_1, 2); // 11 left
 
     unsigned int dword_2 = GetDataWord<unsigned int>();
     signed delta_root_a_2 = GetBits(dword_2, 11);
     unsigned eccentricity = GetBits(dword_2, 11);
-    signed perigee_1 = GetBits(dword_2, 10); // 6 left 
+    signed perigee_1 = GetBits(dword_2, 10); // 6 left
 
     unsigned int dword_3 = GetDataWord<unsigned int>();
     signed perigee_2 = GetBits(dword_3, 6);
     signed diff_ia_na = GetBits(dword_3, 11);
-    signed longitude_1 = GetBits(dword_3, 15); // 1 left 
+    signed longitude_1 = GetBits(dword_3, 15); // 1 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -524,12 +663,12 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed mean_anomaly = GetBits(dword_data, 16);
     unsigned reserved = GetBits(dword_data, 6);
 
-
     word_type_7.issue_of_data = issue_of_data;
     word_type_7.week_num = week_num;
     word_type_7.ref_time = ref_time;
     word_type_7.svid_1 = svid_1;
-    word_type_7.delta_root_a = ConcatenateBits(delta_root_a_1, delta_root_a_2, 2, 11);
+    word_type_7.delta_root_a =
+        ConcatenateBits(delta_root_a_1, delta_root_a_2, 2, 11);
     word_type_7.eccentricity = eccentricity;
     word_type_7.perigee = ConcatenateBits(perigee_1, perigee_2, 10, 6);
     word_type_7.diff_ia_na = diff_ia_na;
@@ -541,12 +680,11 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-
-  else if (word_type_ == ALMANAC_2) {
+  else if (word_type_ == ALMANAC_2) { // Word Type 8
 
     unsigned issue_of_data = GetBits(dword_1, 4);
     signed clock_corr_bias = GetBits(dword_1, 16);
-    signed clock_corr_linear_1 = GetBits(dword_1, 4); // 9 left 
+    signed clock_corr_linear_1 = GetBits(dword_1, 4); // 9 left
 
     unsigned int dword_2 = GetDataWord<unsigned int>();
     signed clock_corr_linear_2 = GetBits(dword_2, 9);
@@ -560,13 +698,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed perigee = GetBits(dword_3, 16);
     signed diff_ia_na_1 = GetBits(dword_3, 5); // 6 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -575,10 +734,10 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed roc_ra = GetBits(dword_data, 11);
     unsigned spare = GetBits(dword_data, 1);
 
-
     word_type_8.issue_of_data = issue_of_data;
     word_type_8.clock_corr_bias = clock_corr_bias;
-    word_type_8.clock_corr_linear = ConcatenateBits(clock_corr_linear_1, clock_corr_linear_2, 4, 9);
+    word_type_8.clock_corr_linear =
+        ConcatenateBits(clock_corr_linear_1, clock_corr_linear_2, 4, 9);
     word_type_8.sig_health_e5b = sig_health_e5b;
     word_type_8.sig_health_e1 = sig_health_e1;
     word_type_8.svid_2 = svid_2;
@@ -593,18 +752,17 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-
-  else if (word_type_ == ALMANAC_3) {
+  else if (word_type_ == ALMANAC_3) { // Word Type 9
 
     unsigned issue_of_data = GetBits(dword_1, 4);
     unsigned week_num = GetBits(dword_1, 2);
     unsigned ref_time = GetBits(dword_1, 10);
-    signed mean_anomaly_1 = GetBits(dword_1, 8); // 8 left 
+    signed mean_anomaly_1 = GetBits(dword_1, 8); // 8 left
 
     unsigned int dword_2 = GetDataWord<unsigned int>();
     signed mean_anomaly_2 = GetBits(dword_2, 8);
     signed clock_corr_bias = GetBits(dword_2, 16);
-    signed clock_corr_linear_1 = GetBits(dword_2, 8); // 5 left 
+    signed clock_corr_linear_1 = GetBits(dword_2, 8); // 5 left
 
     unsigned int dword_3 = GetDataWord<unsigned int>();
     signed clock_corr_linear_2 = GetBits(dword_3, 5);
@@ -614,7 +772,10 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed delta_root_a = GetBits(dword_3, 13);
     unsigned eccentricity_1 = GetBits(dword_3, 4); // 7 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
@@ -622,31 +783,51 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
 
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
+
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
     unsigned eccentricity_2 = GetBits(dword_data, 7);
     signed perigee = GetBits(dword_data, 16);
     signed diff_ia_na = GetBits(dword_data, 11);
 
-
     word_type_9.issue_of_data = issue_of_data;
     word_type_9.week_num = week_num;
     word_type_9.ref_time = ref_time;
-    word_type_9.mean_anomaly = ConcatenateBits(mean_anomaly_1, mean_anomaly_2, 8, 8);
+    word_type_9.mean_anomaly =
+        ConcatenateBits(mean_anomaly_1, mean_anomaly_2, 8, 8);
     word_type_9.clock_corr_bias = clock_corr_bias;
-    word_type_9.clock_corr_linear = ConcatenateBits(clock_corr_linear_1, clock_corr_linear_2, 8, 5);
+    word_type_9.clock_corr_linear =
+        ConcatenateBits(clock_corr_linear_1, clock_corr_linear_2, 8, 5);
     word_type_9.sig_health_e5b = sig_health_e5b;
     word_type_9.sig_health_e1 = sig_health_e1;
     word_type_9.svid_3 = svid_3;
     word_type_9.delta_root_a = delta_root_a;
-    word_type_9.eccentricity = ConcatenateBits(eccentricity_1, eccentricity_2, 4, 7);
+    word_type_9.eccentricity =
+        ConcatenateBits(eccentricity_1, eccentricity_2, 4, 7);
     word_type_9.perigee = perigee;
     word_type_9.diff_ia_na = diff_ia_na;
 
     return true;
   }
 
-  else if (word_type_ == ALMANAC_4) {
+  else if (word_type_ == ALMANAC_4) { // Word Type 10
 
     unsigned issue_of_data = GetBits(dword_1, 4);
     signed longitude = GetBits(dword_1, 16);
@@ -664,13 +845,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned sig_health_e1 = GetBits(dword_3, 2);
     signed const_term_offset_1 = GetBits(dword_3, 8); // 8 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -679,16 +881,17 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned ref_time = GetBits(dword_data, 8);
     unsigned week_num = GetBits(dword_data, 6);
 
-
     word_type_10.issue_of_data = issue_of_data;
     word_type_10.longitude = longitude;
     word_type_10.roc_ra = ConcatenateBits(roc_ra_1, roc_ra_2, 4, 7);
     word_type_10.mean_anomaly = mean_anomaly;
-    word_type_10.clock_corr_bias = ConcatenateBits(clock_corr_bias_1, clock_corr_bias_2, 9, 7);
+    word_type_10.clock_corr_bias =
+        ConcatenateBits(clock_corr_bias_1, clock_corr_bias_2, 9, 7);
     word_type_10.clock_corr_linear = clock_corr_linear;
     word_type_10.sig_health_e5b = sig_health_e5b;
     word_type_10.sig_health_e1 = sig_health_e1;
-    word_type_10.const_term_offset = ConcatenateBits(const_term_offset_1, const_term_offset_2, 8, 8);
+    word_type_10.const_term_offset =
+        ConcatenateBits(const_term_offset_1, const_term_offset_2, 8, 8);
     word_type_10.roc_offset = roc_offset;
     word_type_10.ref_time = ref_time;
     word_type_10.week_num = week_num;
@@ -696,8 +899,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-
-  else if (word_type_ == REDUCED_CED) {
+  else if (word_type_ == REDUCED_CED) { // Word Type 16
 
     signed delta_rced_smajor = GetBits(dword_1, 5);
     signed eccentricity_rced_x = GetBits(dword_1, 13);
@@ -712,7 +914,10 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed rced_longitude_2 = GetBits(dword_3, 15);
     signed lambda_rced_1 = GetBits(dword_3, 17); // 6 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
@@ -720,19 +925,39 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
 
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
+
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
     signed lambda_rced_2 = GetBits(dword_data, 6);
     signed rced_clock_corr_bias = GetBits(dword_data, 22);
     signed rced_clock_corr_drift = GetBits(dword_data, 6);
 
-
     word_type_16.delta_rced_smajor = delta_rced_smajor;
     word_type_16.eccentricity_rced_x = eccentricity_rced_x;
-    word_type_16.eccentricity_rced_y = ConcatenateBits(eccentricity_rced_y_1, eccentricity_rced_y_2, 6, 7);
+    word_type_16.eccentricity_rced_y =
+        ConcatenateBits(eccentricity_rced_y_1, eccentricity_rced_y_2, 6, 7);
     word_type_16.delta_rced_inclination = delta_rced_inclination;
-    word_type_16.rced_longitude = ConcatenateBits(rced_longitude_1, rced_longitude_2, 8, 15);
-    word_type_16.lambda_rced = ConcatenateBits(lambda_rced_1, lambda_rced_2, 17, 6);
+    word_type_16.rced_longitude =
+        ConcatenateBits(rced_longitude_1, rced_longitude_2, 8, 15);
+    word_type_16.lambda_rced =
+        ConcatenateBits(lambda_rced_1, lambda_rced_2, 17, 6);
     word_type_16.rced_clock_corr_bias = rced_clock_corr_bias;
     word_type_16.rced_clock_corr_drift = rced_clock_corr_drift;
 
@@ -740,7 +965,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
 
   }
 
-  else if (word_type_ == FEC2) {
+  else if (word_type_ == FEC2) { // Word Type 17, 18, 19, 20
 
     unsigned fec2_1 = GetBits(dword_1, 8);
     unsigned lsb = GetBits(dword_1, 2);
@@ -753,13 +978,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned long long fec2_2_3 = GetBits(dword_3, 18);
     unsigned long long fec2_3_1 = GetBits(dword_3, 14); // 34 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -775,8 +1021,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-
-  else if (word_type_ == SPARE){
+  else if (word_type_ == SPARE) { // Word Type 0
 
     unsigned time = GetBits(dword_1, 2);
     unsigned long long spare_1 = GetBits(dword_1, 22); // 42 left
@@ -788,13 +1033,34 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned long long spare_3 = GetBits(dword_3, 10);
     unsigned spare2_1 = GetBits(dword_3, 22); // 2 left
 
-    unsigned long long dword_middle = GetWordMiddle<unsigned long long>();
+    unsigned long long dword_4 = GetDataWord<unsigned long long>();
+    unsigned long long dword_5 = GetDataWord<unsigned long long>();
+
+    unsigned long long dword_middle = ConcatenateBits(dword_4, dword_5, 32, 32);
 
     unsigned long long dword_util = dword_middle;
     MaskWordUtilMiddle(dword_util);
     word_util.tail = GetBits(dword_util, 6);
     word_util.even_odd = GetBits(dword_util, 1);
     word_util.page_type = GetBits(dword_util, 1);
+
+    if (word_util.tail != 0) {
+      false_counter++;
+      return false;
+    }
+
+    if (even_ == 0) {
+      if (word_util.even_odd != 1) {
+        false_counter++;
+        return false;
+      }
+    }
+    if (even_ == 1) {
+      if (word_util.even_odd != 0) {
+        false_counter++;
+        return false;
+      }
+    }
 
     unsigned long long dword_data = dword_middle;
     MaskWordDataMiddle(dword_data);
@@ -813,7 +1079,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     return true;
   }
 
-  else if (word_type_ == DUMMY){
+  else if (word_type_ == DUMMY) {
     return true;
   }
 
@@ -824,40 +1090,24 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
 
 template <typename T> T GalileoParser::GetDataWord() {
   pos_ = 0;
-  char * buffer = new char [4];
+  char *buffer = new char[4];
   raw_data_.read(buffer, 4);
 
   T *dword_ref = reinterpret_cast<T *>(buffer);
   T dword = *dword_ref;
-
-  ConvertBits<T>(dword);
 
   delete[] buffer;
 
   return dword;
 }
 
-template <typename T> T GalileoParser::GetWordMiddle() {
-  char * buffer = new char [8];
-  raw_data_.read(buffer, 8);
-
-  T *dword_middle_ref = reinterpret_cast<T *>(buffer);
-  T dword_middle = *dword_middle_ref;
-
-  ConvertBits<T>(dword_middle);
-
-  delete[] buffer;
-
-  return dword_middle;
-}
-
-template <typename T> void GalileoParser::MaskWordUtilMiddle(T& dword_util) {
+template <typename T> void GalileoParser::MaskWordUtilMiddle(T &dword_util) {
   pos_ = 0;
   dword_util = dword_util & mask1_;
   dword_util = (dword_util << 18) | (dword_util << 26);
 }
 
-template <typename T> void GalileoParser::MaskWordDataMiddle(T& dword_data) {
+template <typename T> void GalileoParser::MaskWordDataMiddle(T &dword_data) {
   pos_ = 0;
   dword_data = dword_data & mask2_;
   dword_data = (dword_data) | (dword_data << 16);
@@ -965,16 +1215,43 @@ void GalileoParser::GnssCount(SignalInformation &payload) {
   }
 }
 
-template <typename T> void GalileoParser::ConvertBits(T &x) {
-  if (sizeof(x) == 4)
-    x =
-        (x << 24) | ((x << 8) & 0xFF0000) | ((x >> 8) & 0xFF00) | (x >> 24);
-
-  else if (sizeof(x) == 8)
-    x = (x << 56) | ((x << 40) & 0xFF000000000000) |
-         ((x << 24) & 0xFF0000000000) | ((x << 8) & 0xFF00000000) |
-         ((x >> 8) & 0xFF000000) | ((x >> 24) & 0xFF0000) |
-         ((x >> 40) & 0xFF00) | (x >> 56);
+void GalileoParser::ClassifySvid() {
+  if (payload_sfrbx_head.svId == 1) ++svid1_counter;
+  else if (payload_sfrbx_head.svId == 2) ++svid2_counter;
+  else if (payload_sfrbx_head.svId == 3) ++svid3_counter;
+  else if (payload_sfrbx_head.svId == 4) ++svid4_counter;
+  else if (payload_sfrbx_head.svId == 5) ++svid5_counter;
+  else if (payload_sfrbx_head.svId == 6) ++svid6_counter;
+  else if (payload_sfrbx_head.svId == 7) ++svid7_counter;
+  else if (payload_sfrbx_head.svId == 8) ++svid8_counter;
+  else if (payload_sfrbx_head.svId == 9) ++svid9_counter;
+  else if (payload_sfrbx_head.svId == 10) ++svid10_counter;
+  else if (payload_sfrbx_head.svId == 11) ++svid11_counter;
+  else if (payload_sfrbx_head.svId == 12) ++svid12_counter;
+  else if (payload_sfrbx_head.svId == 13) ++svid13_counter;
+  else if (payload_sfrbx_head.svId == 14) ++svid14_counter;
+  else if (payload_sfrbx_head.svId == 15) ++svid15_counter;
+  else if (payload_sfrbx_head.svId == 16) ++svid16_counter;
+  else if (payload_sfrbx_head.svId == 17) ++svid17_counter;
+  else if (payload_sfrbx_head.svId == 18) ++svid18_counter;
+  else if (payload_sfrbx_head.svId == 19) ++svid19_counter;
+  else if (payload_sfrbx_head.svId == 20) ++svid20_counter;
+  else if (payload_sfrbx_head.svId == 21) ++svid21_counter;
+  else if (payload_sfrbx_head.svId == 22) ++svid22_counter;
+  else if (payload_sfrbx_head.svId == 23) ++svid23_counter;
+  else if (payload_sfrbx_head.svId == 24) ++svid24_counter;
+  else if (payload_sfrbx_head.svId == 25) ++svid25_counter;
+  else if (payload_sfrbx_head.svId == 26) ++svid26_counter;
+  else if (payload_sfrbx_head.svId == 27) ++svid27_counter;
+  else if (payload_sfrbx_head.svId == 28) ++svid28_counter;
+  else if (payload_sfrbx_head.svId == 29) ++svid29_counter;
+  else if (payload_sfrbx_head.svId == 30) ++svid30_counter;
+  else if (payload_sfrbx_head.svId == 31) ++svid31_counter;
+  else if (payload_sfrbx_head.svId == 32) ++svid32_counter;
+  else if (payload_sfrbx_head.svId == 33) ++svid33_counter;
+  else if (payload_sfrbx_head.svId == 34) ++svid34_counter;
+  else if (payload_sfrbx_head.svId == 35) ++svid35_counter;
+  else if (payload_sfrbx_head.svId == 36) ++svid36_counter;
 }
 
 template <typename T> T GalileoParser::GetBits(T x, int n) {
@@ -1007,6 +1284,63 @@ void GalileoParser::Log() const {
             << "\nBeidou: " << beidou_num_navsig_
             << "\nQZSS: " << qzss_num_navsig_ << "\nSBAS: " << sbas_num_navsig_
             << std::endl;
+
+  std::cout << "\nSVID 1: " << svid1_counter
+            << "\nSVID 2: " << svid2_counter
+            << "\nSVID 3: " << svid3_counter
+            << "\nSVID 4: " << svid4_counter
+            << "\nSVID 5: " << svid5_counter
+            << "\nSVID 6: " << svid6_counter
+            << "\nSVID 7: " << svid7_counter
+            << "\nSVID 8: " << svid8_counter
+            << "\nSVID 9: " << svid9_counter
+            << "\nSVID 10: " << svid10_counter
+            << "\nSVID 11: " << svid11_counter
+            << "\nSVID 12: " << svid12_counter
+            << "\nSVID 13: " << svid13_counter
+            << "\nSVID 14: " << svid14_counter
+            << "\nSVID 15: " << svid15_counter
+            << "\nSVID 16: " << svid16_counter
+            << "\nSVID 17: " << svid17_counter
+            << "\nSVID 18: " << svid18_counter
+            << "\nSVID 19: " << svid19_counter
+            << "\nSVID 20: " << svid20_counter
+            << "\nSVID 21: " << svid21_counter
+            << "\nSVID 22: " << svid22_counter
+            << "\nSVID 23: " << svid23_counter
+            << "\nSVID 24: " << svid24_counter
+            << "\nSVID 25: " << svid25_counter
+            << "\nSVID 26: " << svid26_counter
+            << "\nSVID 27: " << svid27_counter
+            << "\nSVID 28: " << svid28_counter
+            << "\nSVID 29: " << svid29_counter
+            << "\nSVID 30: " << svid30_counter
+            << "\nSVID 31: " << svid31_counter
+            << "\nSVID 32: " << svid32_counter
+            << "\nSVID 33: " << svid33_counter
+            << "\nSVID 34: " << svid34_counter
+            << "\nSVID 35: " << svid35_counter
+            << "\nSVID 36: " << svid36_counter
+            << std::endl;
+
+  
+  std::cout << "\nWord Type 0: " << wordtype0_counter
+            << "\nWord Type 1: " << wordtype1_counter
+            << "\nWord Type 2: " << wordtype2_counter
+            << "\nWord Type 3: " << wordtype3_counter
+            << "\nWord Type 4: " << wordtype4_counter
+            << "\nWord Type 5: " << wordtype5_counter
+            << "\nWord Type 6: " << wordtype6_counter
+            << "\nWord Type 7: " << wordtype7_counter
+            << "\nWord Type 8: " << wordtype8_counter
+            << "\nWord Type 9: " << wordtype9_counter
+            << "\nWord Type 10: " << wordtype10_counter
+            << "\nWord Type 16: " << wordtype16_counter
+            << "\nWord Type 17: " << wordtype17_counter
+            << "\nWord Type 63: " << wordtype63_counter
+            << std::endl;
+
+
 
   std::cout << "\nCounter: " << counter << std::endl;
   std::cout << "True: " << true_counter << std::endl;
