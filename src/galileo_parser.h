@@ -1,6 +1,8 @@
 #ifndef GALILEO_GALILEO_PARSER_H
 #define GALILEO_GALILEO_PARSER_H
 
+#define INIT 0.37
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -66,6 +68,8 @@ private:
     unsigned short even_odd : 1;
     unsigned short page_type : 1;
   } word_util;
+
+public:
 
   /**
    * @brief Word Type 1: Ephemeris (1/4)
@@ -235,7 +239,7 @@ private:
    *        almanac reference week number
    *
    * @param week_num WNa Almanac reference Week Number
-   * @param ref_time t0a Almanac reference time
+   * @param ref_time_ t0a Almanac reference time
    * @param svid_1 SVID Satellite ID (1 constellation of 36 satellites)
    * @param delta_root_a Δ(A1/2) Difference between the square root of the
    *                     semi-major axis and the square root of the
@@ -352,7 +356,7 @@ private:
    * @param const_term_offset A0G Constant term of the polynomial describing the
    * offset
    * @param roc_offset A1G Rate of change of the offset
-   * @param ref_time t0G Reference time for GGTO data
+   * @param ref_time_ t0G Reference time for GGTO data
    * @param week_num WN0G Week Number of GGTO reference
    *
    */
@@ -470,6 +474,8 @@ private:
     DUMMY = 63
   } word_type_;
 
+private:
+
   unsigned int galileo_num_sfrbx_ = 0;
   unsigned int gps_num_sfrbx_ = 0;
   unsigned int sbas_num_sfrbx_ = 0;
@@ -563,5 +569,1299 @@ public:
   void Log() const;
   void Warn() const;
 };
+
+class SpaceVehicle {
+private:
+
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word, GalileoParser::WordType type);
+
+};
+
+class SpaceVehicle1 : public SpaceVehicle {
+private:
+
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle2 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle3 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle4 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle5 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle6 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+};
+
+class SpaceVehicle7 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle8 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle9 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle10 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle11 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle12 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle13 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+};
+
+class SpaceVehicle14 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+};
+
+class SpaceVehicle15 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+};
+
+class SpaceVehicle16 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+};
+
+class SpaceVehicle17 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+};
+
+class SpaceVehicle18 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle19 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle20 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle21 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle22 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle23 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle24 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle25 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle26 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle27 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle28 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle29 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle30 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle31 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle32 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle33 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle34 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle35 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+class SpaceVehicle36 : public SpaceVehicle {
+private:
+  double epoch_ = INIT;
+  double clock_bias_ = INIT;
+  double clock_drift_ = INIT;
+  double clock_drift_rate_ = INIT;
+  double issue_of_data_ = INIT;
+  double crs_ = INIT;
+  double delta_n_ = INIT;
+  double mean_anomaly_ = INIT;
+  double cuc_ = INIT;
+  double eccentricity_ = INIT;
+  double cus_ = INIT;
+  double semi_major_root_ = INIT;
+  double ref_time_ = INIT;
+  double cic_ = INIT;
+  double omega0_ = INIT;
+  double cis_ = INIT;
+  double inclination_angle_ = INIT;
+  double crc_ = INIT;
+  double omega_ = INIT;
+  double omega_dot_ = INIT;
+  double roc_inclination_angle_ = INIT;
+  double week_num_ = INIT;
+  double sisa_ = INIT;
+  double sig_health_validity_ = INIT;
+  double bgd1_ = INIT;
+  double bgd2_ = INIT;
+
+public:
+  
+  template <typename T> void add(T word);
+
+};
+
+
+
 
 #endif // GALILEO_GALILEO_PARSER_H

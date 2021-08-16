@@ -1086,6 +1086,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
   else {
     return false;
   }
+
 }
 
 template <typename T> T GalileoParser::GetDataWord() {
@@ -1348,3 +1349,150 @@ void GalileoParser::Log() const {
 }
 
 void GalileoParser::Warn() const { std::cout << "WARNING!!!" << std::endl; }
+
+
+
+template <typename T> 
+void SpaceVehicle::add(T word, GalileoParser::WordType type) {
+
+  if (type == 1) {
+
+    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
+    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
+           else std::cout << "Same IOD is obtained" << std::endl;}
+
+    if (ref_time_ == INIT) ref_time_ = word.reference_time * 60; // scale factor 60
+    else { if (ref_time_ != word.reference_time) {std::cout << "new ref_time has arrived" << std::endl;} 
+           else std::cout << "Same ref_time is obtained" << std::endl;} 
+
+    if (mean_anomaly_ == INIT) mean_anomaly_ = word.mean_anomaly * 2e-31; // scale factor  2e-31
+    else { if (mean_anomaly_ != word.mean_anomaly) {std::cout << "new mean_anomaly has arrived" << std::endl;} 
+           else std::cout << "Same mean_anomaly is obtained" << std::endl;}
+
+    if (eccentricity_ == INIT) eccentricity_ = word.eccentricity * 2e-33; // scale factor 2e-33
+    else { if (eccentricity_ != word.eccentricity) {std::cout << "new eccentricity has arrived" << std::endl;} 
+           else std::cout << "Same eccentricity is obtained" << std::endl;} 
+
+    if (semi_major_root_ == INIT) semi_major_root_ = word.root_semi_major_axis * 2e-19; // scale factor 2e-19
+    else { if (semi_major_root_ != word.root_semi_major_axis) {std::cout << "new semi_major_root_ has arrived" << std::endl;} 
+           else std::cout << "Same semi_major_root_ is obtained" << std::endl;}
+
+  }
+
+
+  else if (type == 2) {
+
+    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
+    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
+           else std::cout << "Same IOD is obtained" << std::endl;}
+
+    if (omega0_ == INIT) omega0_ = word.longitude * 2e-31; // scale factor 2e-31 
+    else { if (omega0_ != word.longitude) {std::cout << "new omega0_ has arrived" << std::endl;}
+           else std::cout << "Same omega0_ is obtained" << std::endl;}
+
+    if (inclination_angle_ == INIT) inclination_angle_ = word.inclination_angle * 2e-31; // scale factor 2e-31
+    else { if (inclination_angle_ != word.inclination_angle) {std::cout << "new inclination_angle_ has arrived" << std::endl;}
+           else std::cout << "Same inclination_angle_ is obtained" << std::endl;}
+
+    if (omega_ == INIT) omega_ = word.perigee * 2e-31; // scale factor 2e-31 
+    else { if (omega_ != word.perigee) {std::cout << "new omega_ has arrived" << std::endl;}
+           else std::cout << "Same omega_ is obtained" << std::endl;}
+
+    if (roc_inclination_angle_ == INIT) roc_inclination_angle_ = word.ia_rate_of_change * 2e-43; // scale factor 2e-43 
+    else { if (roc_inclination_angle_ != word.ia_rate_of_change) {std::cout << "new roc_inclination_angle_ has arrived" << std::endl;}
+           else std::cout << "Same roc_inclination_angle_ is obtained" << std::endl;}
+
+  }
+
+
+  else if (type == 3) {
+
+    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
+    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
+           else std::cout << "Same IOD is obtained" << std::endl;}
+
+    if (omega_dot_ == INIT) omega_dot_ = word.ra_rate_of_change * 2e-43; // scale factor 2e-43
+    else { if (omega_dot_ != word.ra_rate_of_change) {std::cout << "new omega_dot_ has arrived" << std::endl;}
+           else std::cout << "Same omega_dot_ is obtained" << std::endl;}
+
+    if (delta_n_ == INIT) delta_n_ = word.mean_motion_difference * 2e-43; // scale factor 2e-43 
+    else { if (delta_n_ != word.mean_motion_difference) {std::cout << "new delta_n_ has arrived" << std::endl;}
+           else std::cout << "Same delta_n_ is obtained" << std::endl;}
+
+    if (cuc_ == INIT) cuc_ = word.C_uc * 2e-29; // scale factor 2e-29 
+    else { if (cuc_ != word.C_uc) {std::cout << "new cuc_ has arrived" << std::endl;}
+           else std::cout << "Same cuc_ is obtained" << std::endl;}
+
+    if (cus_ == INIT) cus_ = word.C_us * 2e-29; // scale factor 2e-29 
+    else { if (cus_ != word.C_us) {std::cout << "new cus_ has arrived" << std::endl;}
+           else std::cout << "Same cus_ is obtained" << std::endl;}
+
+    if (crc_ == INIT) crc_ = word.C_rc * 2e-5; // scale factor 2e-5 
+    else { if (crc_ != word.C_rc) {std::cout << "new crc_ has arrived" << std::endl;}
+           else std::cout << "Same crc_ is obtained" << std::endl;}
+
+    if (crs_ == INIT) crs_ = word.C_rs * 2e-5; // scale factor 2e-5 
+    else { if (crs_ != word.C_rs) {std::cout << "new crs_ has arrived" << std::endl;}
+           else std::cout << "Same crs_ is obtained" << std::endl;}
+
+    if (sisa_ == INIT) sisa_ = word.sisa; 
+    else { if (sisa_ != word.sisa) {std::cout << "new sisa_ has arrived" << std::endl;}
+           else std::cout << "Same sisa_ is obtained" << std::endl;}
+
+  }
+
+
+  else if (type == 4) { // svid and reference not included 
+
+    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
+    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
+           else std::cout << "Same IOD is obtained" << std::endl;}
+
+    if (cic_ == INIT) cic_ = word.C_ic * 2e-29; // scale factor 2e-29
+    else { if (cic_ != word.C_ic) {std::cout << "new cic_ has arrived" << std::endl;}
+           else std::cout << "Same cic_ is obtained" << std::endl;}
+
+    if (cis_ == INIT) cis_ = word.C_is * 2e-29; // scale factor 2e-29
+    else { if (cis_ != word.C_is) {std::cout << "new cis_ has arrived" << std::endl;}
+           else std::cout << "Same cis_ is obtained" << std::endl;}
+
+    if (clock_bias_ == INIT) clock_bias_ = word.clock_bias_corr * 2e-34; // scale factor 2e-34
+    else { if (clock_bias_ != word.clock_bias_corr) {std::cout << "new clock_bias_ has arrived" << std::endl;}
+           else std::cout << "Same clock_bias_ is obtained" << std::endl;}
+
+    if (clock_drift_ == INIT) clock_drift_ = word.clock_drift_corr * 2e-46; // scale factor 2e-46
+    else { if (clock_drift_ != word.clock_drift_corr) {std::cout << "new clock_drift_ has arrived" << std::endl;}
+           else std::cout << "Same clock_drift_ is obtained" << std::endl;}
+
+    if (clock_drift_rate_ == INIT) clock_drift_rate_ = word.clock_drift_rate_corr * 2e-59; // scale factor 2e-59
+    else { if (clock_drift_rate_ != word.clock_drift_rate_corr) {std::cout << "new clock_bias_ has arrived" << std::endl;}
+           else std::cout << "Same clock_bias_ is obtained" << std::endl;}
+
+  }
+  
+
+  else if (type == 5) {
+
+  }
+
+  else if (type == 6) {
+
+  }
+
+  else if (type == 7) {
+
+  }
+
+  else if (type == 8) {
+
+  }
+
+  else if (type == 9) {
+
+  }
+
+  else if (type == 10) {
+
+  }
+
+}
