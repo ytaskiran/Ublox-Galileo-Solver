@@ -9,6 +9,8 @@
 #include <unistd.h>
 
 
+std::ofstream nav_data_file_("output_navdata.txt");
+
 class SpaceVehicle {
 private:
 
@@ -61,7 +63,7 @@ private:
   bool flag4_ = false;
 
 public:
-  
+
   template <typename T> void add_type1(T word, unsigned int type, unsigned int svId);
   template <typename T> void add_type2(T word, unsigned int type, unsigned int svId);
   template <typename T> void add_type3(T word, unsigned int type, unsigned int svId);
@@ -74,6 +76,7 @@ public:
   template <typename T> void add_type10(T word, unsigned int type, unsigned int svId);
   void reset();
   bool check_full(unsigned int type);
+  void write(std::ofstream& nav_data_file_);
 };
 
 

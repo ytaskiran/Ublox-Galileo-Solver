@@ -1437,6 +1437,7 @@ void GalileoParser::Log() const {
   std::cout << "False: " << false_counter << std::endl;
 }
 
+
 void GalileoParser::Warn() const { std::cout << "WARNING!!!" << std::endl; }
 
 
@@ -1564,6 +1565,7 @@ bool SpaceVehicle::check_full(unsigned int type) {
       cic_ != INIT && omega0_ != INIT && cis_ != INIT && inclination_angle_ != INIT &&
       crc_ != INIT && omega_ != INIT && omega_dot_ != INIT && roc_inclination_angle_ != INIT &&
       week_num_ != INIT && sisa_ != INIT && bgd1_ != INIT && bgd2_ != INIT && epoch_ != INIT) {
+        write(nav_data_file_);
         reset();
         return true;
       }
@@ -1599,4 +1601,10 @@ void SpaceVehicle::reset() {
   sig_health_validity_ = INIT;
   bgd1_ = INIT;
   bgd2_ = INIT;
+}
+
+void SpaceVehicle::write(std::ofstream& nav_data_file_) {
+  
+  nav_data_file_ << "denemeler denemeler" << "\n" << "\tvesaire";
+
 }
