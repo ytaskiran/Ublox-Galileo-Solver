@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/cezeri/galileo/src/galileo_parser.h
+fstream
+-
+iostream
+-
+string
+-
+unistd.h
+-
+space_vehicles.h
+/home/cezeri/galileo/src/space_vehicles.h
+
+/home/cezeri/galileo/src/space_vehicles.cc
+space_vehicles.h
+/home/cezeri/galileo/src/space_vehicles.h
+
+/home/cezeri/galileo/src/space_vehicles.h
+iostream
+-
+unistd.h
+-
+galileo_parser.h
+/home/cezeri/galileo/src/galileo_parser.h
+

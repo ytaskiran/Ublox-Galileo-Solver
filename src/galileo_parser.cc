@@ -275,6 +275,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_1.root_semi_major_axis = GetBits(dword_data, 32);
     word_type_1.reserved = GetBits(dword_data, 2);
 
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type1(word_type_1, 1, svId);
+        space_vehicle[i].check_full(1);
+      }
+    }
+
     return true;
   }
 
@@ -330,8 +339,16 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     signed perigee_2 = GetBits(dword_data, 18);
     word_type_2.ia_rate_of_change = GetBits(dword_data, 14);
     word_type_2.reserved = GetBits(dword_data, 2);
-
     word_type_2.perigee = ConcatenateBits(perigee_1, perigee_2, 14, 18);
+
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type2(word_type_2, 2, svId);
+        space_vehicle[i].check_full(2);
+      }
+    }
 
     return true;
   }
@@ -395,6 +412,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_3.C_rc = ConcatenateBits(C_rc_1, C_rc_2, 6, 10);
     word_type_3.C_rs = C_rs;
     word_type_3.sisa = sisa;
+
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type3(word_type_3, 3, svId);
+        space_vehicle[i].check_full(3);
+      }
+    }
 
     return true;
   }
@@ -460,6 +486,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_4.clock_drift_corr = clock_drift_corr;
     word_type_4.clock_drift_rate_corr = clock_drift_rate_corr;
     word_type_4.spare = spare;
+
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type4(word_type_4, 4, svId);
+        space_vehicle[i].check_full(4);
+      }
+    }
 
     return true;
   }
@@ -542,6 +577,14 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
         ConcatenateBits(time_of_week_1, time_of_week_2, 9, 11);
     word_type_5.spare = spare;
 
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type5(word_type_5, 5, svId);
+        space_vehicle[i].check_full(5);
+      }
+    }
     return true;
   }
 
@@ -605,6 +648,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_6.ls_count_after = ls_count_after;
     word_type_6.time_of_week = time_of_week;
     word_type_6.spare = spare;
+
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type6(word_type_6, 6, svId);
+        space_vehicle[i].check_full(6);
+      }
+    }
 
     return true;
   }
@@ -677,6 +729,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_7.mean_anomaly = mean_anomaly;
     word_type_7.reserved = reserved;
 
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type7(word_type_7, 7, svId);
+        space_vehicle[i].check_full(7);
+      }
+    }
+
     return true;
   }
 
@@ -748,6 +809,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_8.longitude = longitude;
     word_type_8.roc_ra = roc_ra;
     word_type_8.spare = spare;
+
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type8(word_type_8, 8, svId);
+        space_vehicle[i].check_full(8);
+      }
+    }
 
     return true;
   }
@@ -824,6 +894,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_9.perigee = perigee;
     word_type_9.diff_ia_na = diff_ia_na;
 
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type9(word_type_9, 9, svId);
+        space_vehicle[i].check_full(9);
+      }
+    }
+
     return true;
   }
 
@@ -895,6 +974,15 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_10.roc_offset = roc_offset;
     word_type_10.ref_time = ref_time;
     word_type_10.week_num = week_num;
+
+    unsigned int svId = payload_sfrbx_head.svId;
+
+    for (int i=0; i<36; i++) {
+      if (i+1 == svId) {
+        space_vehicle[i].add_type10(word_type_10, 10, svId);
+        space_vehicle[i].check_full(10);
+      }
+    }
 
     return true;
   }
@@ -1113,6 +1201,7 @@ template <typename T> void GalileoParser::MaskWordDataMiddle(T &dword_data) {
   dword_data = dword_data & mask2_;
   dword_data = (dword_data) | (dword_data << 16);
 }
+
 
 void GalileoParser::GnssCount(NavigationDataHead &payload) {
   switch (payload.gnssId) {
@@ -1351,148 +1440,163 @@ void GalileoParser::Log() const {
 void GalileoParser::Warn() const { std::cout << "WARNING!!!" << std::endl; }
 
 
+template <typename T> void SpaceVehicle::add_type1(T word, unsigned int type, unsigned int svId) {
 
-template <typename T> 
-void SpaceVehicle::add(T word, GalileoParser::WordType type) {
+  issue_of_data_ = word.issue_of_data;
+  ref_time_ = word.reference_time * 60; // scale factor 60
+  mean_anomaly_ = word.mean_anomaly * 2e-31; // scale factor  2e-31
+  eccentricity_ = word.eccentricity * 2e-33; // scale factor 2e-33
+  semi_major_root_ = word.root_semi_major_axis * 2e-19; // scale factor 2e-19
+}
 
-  if (type == 1) {
 
-    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
-    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
-           else std::cout << "Same IOD is obtained" << std::endl;}
+template <typename T> void SpaceVehicle::add_type2(T word, unsigned int type, unsigned int svId) {
 
-    if (ref_time_ == INIT) ref_time_ = word.reference_time * 60; // scale factor 60
-    else { if (ref_time_ != word.reference_time) {std::cout << "new ref_time has arrived" << std::endl;} 
-           else std::cout << "Same ref_time is obtained" << std::endl;} 
+  issue_of_data_ = word.issue_of_data; 
+  omega0_ = word.longitude * 2e-31; // scale factor 2e-31 
+  inclination_angle_ = word.inclination_angle * 2e-31; // scale factor 2e-31
+  omega_ = word.perigee * 2e-31; // scale factor 2e-31 
+  roc_inclination_angle_ = word.ia_rate_of_change * 2e-43; // scale factor 2e-43 
+}
 
-    if (mean_anomaly_ == INIT) mean_anomaly_ = word.mean_anomaly * 2e-31; // scale factor  2e-31
-    else { if (mean_anomaly_ != word.mean_anomaly) {std::cout << "new mean_anomaly has arrived" << std::endl;} 
-           else std::cout << "Same mean_anomaly is obtained" << std::endl;}
 
-    if (eccentricity_ == INIT) eccentricity_ = word.eccentricity * 2e-33; // scale factor 2e-33
-    else { if (eccentricity_ != word.eccentricity) {std::cout << "new eccentricity has arrived" << std::endl;} 
-           else std::cout << "Same eccentricity is obtained" << std::endl;} 
 
-    if (semi_major_root_ == INIT) semi_major_root_ = word.root_semi_major_axis * 2e-19; // scale factor 2e-19
-    else { if (semi_major_root_ != word.root_semi_major_axis) {std::cout << "new semi_major_root_ has arrived" << std::endl;} 
-           else std::cout << "Same semi_major_root_ is obtained" << std::endl;}
 
+template <typename T> void SpaceVehicle::add_type3(T word, unsigned int type, unsigned int svId) {
+
+  issue_of_data_ = word.issue_of_data; 
+  omega_dot_ = word.ra_rate_of_change * 2e-43; // scale factor 2e-43
+  delta_n_ = word.mean_motion_difference * 2e-43; // scale factor 2e-43 
+  cuc_ = word.C_uc * 2e-29; // scale factor 2e-29 
+  cus_ = word.C_us * 2e-29; // scale factor 2e-29 
+  crc_ = word.C_rc * 2e-5; // scale factor 2e-5 
+  crs_ = word.C_rs * 2e-5; // scale factor 2e-5 
+  sisa_ = word.sisa;
+}
+
+
+
+template <typename T> void SpaceVehicle::add_type4(T word, unsigned int type, unsigned int svId) { // svid not included
+
+  issue_of_data_ = word.issue_of_data; 
+  cic_ = word.C_ic * 2e-29; // scale factor 2e-29
+  cis_ = word.C_is * 2e-29; // scale factor 2e-29
+  epoch_ = word.reference * 60; // scale factor 60
+  clock_bias_ = word.clock_bias_corr * 2e-34; // scale factor 2e-34
+  clock_drift_ = word.clock_drift_corr * 2e-46; // scale factor 2e-46
+  clock_drift_rate_ = word.clock_drift_rate_corr * 2e-59; // scale factor 2e-59
+}
+
+
+
+template <typename T> void SpaceVehicle::add_type5(T word, unsigned int type, unsigned int svId) {
+  // effionl_0, effionl_1, effionl_2, region1, region2, region3, region4, region5 not included
+
+  if (!flag1_) {
+    gal_ai0_ = word.effionl_0 * 2e-2;
+    gal_ai1_ = word.effionl_1 * 2e-8;
+    gal_ai2_ = word.effionl_2 * 2e-15;
+
+    flag1_ = true;
   }
 
+  bgd1_ = word.bgd_1 * 2e-32; // scale factor 2e-32
+  bgd2_ = word.bgd_2 * 2e-32; // scale factor 2e-32
 
-  else if (type == 2) {
+  /*
+  Figure sth out for signal health and data validity status
+  */
 
-    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
-    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
-           else std::cout << "Same IOD is obtained" << std::endl;}
+  week_num_ = word.week_num; // scale factor 1
 
-    if (omega0_ == INIT) omega0_ = word.longitude * 2e-31; // scale factor 2e-31 
-    else { if (omega0_ != word.longitude) {std::cout << "new omega0_ has arrived" << std::endl;}
-           else std::cout << "Same omega0_ is obtained" << std::endl;}
+}
 
-    if (inclination_angle_ == INIT) inclination_angle_ = word.inclination_angle * 2e-31; // scale factor 2e-31
-    else { if (inclination_angle_ != word.inclination_angle) {std::cout << "new inclination_angle_ has arrived" << std::endl;}
-           else std::cout << "Same inclination_angle_ is obtained" << std::endl;}
 
-    if (omega_ == INIT) omega_ = word.perigee * 2e-31; // scale factor 2e-31 
-    else { if (omega_ != word.perigee) {std::cout << "new omega_ has arrived" << std::endl;}
-           else std::cout << "Same omega_ is obtained" << std::endl;}
+template <typename T> void SpaceVehicle::add_type6(T word, unsigned int type, unsigned int svId) {
 
-    if (roc_inclination_angle_ == INIT) roc_inclination_angle_ = word.ia_rate_of_change * 2e-43; // scale factor 2e-43 
-    else { if (roc_inclination_angle_ != word.ia_rate_of_change) {std::cout << "new roc_inclination_angle_ has arrived" << std::endl;}
-           else std::cout << "Same roc_inclination_angle_ is obtained" << std::endl;}
+  if (!flag2_) {
+    gaut_a0_ = word.A0 * 2e-30;
+    gaut_a1_ = word.A1 * 2e-50;
+    gaut_tow_ = word.utc_reference_tow * 3600;
+    gaut_week_ = word.utc_reference_week;
 
+    flag2_ = true;
   }
+}
 
 
-  else if (type == 3) {
-
-    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
-    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
-           else std::cout << "Same IOD is obtained" << std::endl;}
-
-    if (omega_dot_ == INIT) omega_dot_ = word.ra_rate_of_change * 2e-43; // scale factor 2e-43
-    else { if (omega_dot_ != word.ra_rate_of_change) {std::cout << "new omega_dot_ has arrived" << std::endl;}
-           else std::cout << "Same omega_dot_ is obtained" << std::endl;}
-
-    if (delta_n_ == INIT) delta_n_ = word.mean_motion_difference * 2e-43; // scale factor 2e-43 
-    else { if (delta_n_ != word.mean_motion_difference) {std::cout << "new delta_n_ has arrived" << std::endl;}
-           else std::cout << "Same delta_n_ is obtained" << std::endl;}
-
-    if (cuc_ == INIT) cuc_ = word.C_uc * 2e-29; // scale factor 2e-29 
-    else { if (cuc_ != word.C_uc) {std::cout << "new cuc_ has arrived" << std::endl;}
-           else std::cout << "Same cuc_ is obtained" << std::endl;}
-
-    if (cus_ == INIT) cus_ = word.C_us * 2e-29; // scale factor 2e-29 
-    else { if (cus_ != word.C_us) {std::cout << "new cus_ has arrived" << std::endl;}
-           else std::cout << "Same cus_ is obtained" << std::endl;}
-
-    if (crc_ == INIT) crc_ = word.C_rc * 2e-5; // scale factor 2e-5 
-    else { if (crc_ != word.C_rc) {std::cout << "new crc_ has arrived" << std::endl;}
-           else std::cout << "Same crc_ is obtained" << std::endl;}
-
-    if (crs_ == INIT) crs_ = word.C_rs * 2e-5; // scale factor 2e-5 
-    else { if (crs_ != word.C_rs) {std::cout << "new crs_ has arrived" << std::endl;}
-           else std::cout << "Same crs_ is obtained" << std::endl;}
-
-    if (sisa_ == INIT) sisa_ = word.sisa; 
-    else { if (sisa_ != word.sisa) {std::cout << "new sisa_ has arrived" << std::endl;}
-           else std::cout << "Same sisa_ is obtained" << std::endl;}
-
-  }
+template <typename T> void SpaceVehicle::add_type7(T word, unsigned int type, unsigned int svId) {
+  /*std::cout << "******************* ALMANAC TIME ******************" << std::endl;
+  std::cout << "SV: " << svId << "\tAlmanac of: " << word.svid_1 << "\tWord Type: " << type << std::endl; 
+  std::cout << "IOD: " << word.issue_of_data << std::endl;
+  std::cout << "Week num: " << word.week_num << std::endl;
+  std::cout << "Ref time: " << word.ref_time << std::endl;
+  std::cout << "delta_root_a:  " << word.delta_root_a << std::endl;
+  std::cout << "eccentricity: " << word.eccentricity << std::endl;
+  std::cout << "perigee: " << word.perigee << std::endl;*/
+}
 
 
-  else if (type == 4) { // svid and reference not included 
+template <typename T> void SpaceVehicle::add_type8(T word, unsigned int type, unsigned int svId) {}
 
-    if (issue_of_data_ == INIT) issue_of_data_ = word.issue_of_data; 
-    else { if (issue_of_data_ != word.issue_of_data) {std::cout << "IOD is not same" << std::endl;}
-           else std::cout << "Same IOD is obtained" << std::endl;}
+template <typename T> void SpaceVehicle::add_type9(T word, unsigned int type, unsigned int svId) {}
 
-    if (cic_ == INIT) cic_ = word.C_ic * 2e-29; // scale factor 2e-29
-    else { if (cic_ != word.C_ic) {std::cout << "new cic_ has arrived" << std::endl;}
-           else std::cout << "Same cic_ is obtained" << std::endl;}
-
-    if (cis_ == INIT) cis_ = word.C_is * 2e-29; // scale factor 2e-29
-    else { if (cis_ != word.C_is) {std::cout << "new cis_ has arrived" << std::endl;}
-           else std::cout << "Same cis_ is obtained" << std::endl;}
-
-    if (clock_bias_ == INIT) clock_bias_ = word.clock_bias_corr * 2e-34; // scale factor 2e-34
-    else { if (clock_bias_ != word.clock_bias_corr) {std::cout << "new clock_bias_ has arrived" << std::endl;}
-           else std::cout << "Same clock_bias_ is obtained" << std::endl;}
-
-    if (clock_drift_ == INIT) clock_drift_ = word.clock_drift_corr * 2e-46; // scale factor 2e-46
-    else { if (clock_drift_ != word.clock_drift_corr) {std::cout << "new clock_drift_ has arrived" << std::endl;}
-           else std::cout << "Same clock_drift_ is obtained" << std::endl;}
-
-    if (clock_drift_rate_ == INIT) clock_drift_rate_ = word.clock_drift_rate_corr * 2e-59; // scale factor 2e-59
-    else { if (clock_drift_rate_ != word.clock_drift_rate_corr) {std::cout << "new clock_bias_ has arrived" << std::endl;}
-           else std::cout << "Same clock_bias_ is obtained" << std::endl;}
-
-  }
+template <typename T> void SpaceVehicle::add_type10(T word, unsigned int type, unsigned int svId) {
   
+  if (!flag3_) {
+    gpga_a0g_ = word.const_term_offset * 2e-35;
+    gpga_a1g_ = word.roc_offset * 2e-51;
+    gpga_tow_ = word.ref_time * 3600;
+    gpga_week_ = word.week_num;
 
-  else if (type == 5) {
-
+    flag3_ = true;
   }
+}
 
-  else if (type == 6) {
 
-  }
+bool SpaceVehicle::check_full(unsigned int type) {
 
-  else if (type == 7) {
+  if (flag1_ && flag2_ && flag3_ && !flag4_) {flag4_ = true;}
 
-  }
+  if (clock_bias_ != INIT && clock_drift_ != INIT && clock_drift_rate_ != INIT && issue_of_data_ != INIT &&
+      crs_ != INIT && delta_n_ != INIT && mean_anomaly_ != INIT && cuc_ != INIT &&
+      eccentricity_ != INIT && cus_ != INIT && semi_major_root_ != INIT && ref_time_ != INIT &&
+      cic_ != INIT && omega0_ != INIT && cis_ != INIT && inclination_angle_ != INIT &&
+      crc_ != INIT && omega_ != INIT && omega_dot_ != INIT && roc_inclination_angle_ != INIT &&
+      week_num_ != INIT && sisa_ != INIT && bgd1_ != INIT && bgd2_ != INIT && epoch_ != INIT) {
+        reset();
+        return true;
+      }
 
-  else if (type == 8) {
+  else 
+    return false;
+}
 
-  }
-
-  else if (type == 9) {
-
-  }
-
-  else if (type == 10) {
-
-  }
-
+void SpaceVehicle::reset() {
+  epoch_ = INIT;
+  clock_bias_ = INIT;
+  clock_drift_ = INIT;
+  clock_drift_rate_ = INIT;
+  issue_of_data_ = INIT;
+  crs_ = INIT;
+  delta_n_ = INIT;
+  mean_anomaly_ = INIT;
+  cuc_ = INIT;
+  eccentricity_ = INIT;
+  cus_ = INIT;
+  semi_major_root_ = INIT;
+  ref_time_ = INIT;
+  cic_ = INIT;
+  omega0_ = INIT;
+  cis_ = INIT;
+  inclination_angle_ = INIT;
+  crc_ = INIT;
+  omega_ = INIT;
+  omega_dot_ = INIT;
+  roc_inclination_angle_ = INIT;
+  week_num_ = INIT;
+  sisa_ = INIT;
+  sig_health_validity_ = INIT;
+  bgd1_ = INIT;
+  bgd2_ = INIT;
 }

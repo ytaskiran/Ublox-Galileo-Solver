@@ -1,0 +1,2 @@
+/usr/bin/ar qc libspace_vehicles.a  CMakeFiles/space_vehicles.dir/space_vehicles.cc.o
+/usr/bin/ranlib libspace_vehicles.a
