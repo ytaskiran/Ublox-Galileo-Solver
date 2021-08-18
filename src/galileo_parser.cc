@@ -1,6 +1,8 @@
 #include "galileo_parser.h"
 #include <bitset>
 
+std::ofstream nav_data_file_("../../data/output_navdata.txt");
+
 GalileoParser::GalileoParser(const std::string &path) : file_(path) {}
 
 void GalileoParser::Read() {
@@ -558,6 +560,11 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     unsigned time_of_week_2 = GetBits(dword_data, 11);
     unsigned spare = GetBits(dword_data, 11);
 
+    unsigned sig_hs_dvs_1 = ConcatenateBits(sig_health_e5b, data_validity_e5b, 2, 1);
+    unsigned sig_hs_dvs_2 = ConcatenateBits(sig_hs_dvs_1, (unsigned int)0, 3, 3);
+    unsigned sig_hs_dvs_3 = ConcatenateBits(sig_hs_dvs_2, sig_health_e1, 6, 2);
+    unsigned sig_hs_dvs = ConcatenateBits(sig_hs_dvs_3, data_validity_e1, 8, 1);
+
     word_type_5.effionl_0 = effionl_0;
     word_type_5.effionl_1 = effionl_1;
     word_type_5.effionl_2 = ConcatenateBits(effionl_2_1, effionl_2_2, 2, 12);
@@ -572,6 +579,7 @@ bool GalileoParser::ParseDataWord(std::ifstream &raw_data_,
     word_type_5.sig_health_e1 = sig_health_e1;
     word_type_5.data_validity_e5b = data_validity_e5b;
     word_type_5.data_validity_e1 = data_validity_e1;
+    word_type_5.sig_health_validity = sig_hs_dvs;
     word_type_5.week_num = week_num;
     word_type_5.time_of_week =
         ConcatenateBits(time_of_week_1, time_of_week_2, 9, 11);
@@ -1198,8 +1206,9 @@ template <typename T> void GalileoParser::MaskWordUtilMiddle(T &dword_util) {
 
 template <typename T> void GalileoParser::MaskWordDataMiddle(T &dword_data) {
   pos_ = 0;
-  dword_data = dword_data & mask2_;
-  dword_data = (dword_data) | (dword_data << 16);
+  T dword_data1 = dword_data & mask2_;
+  T dword_data2 = dword_data & mask3_;
+  dword_data = (dword_data1) | (dword_data2 << 16);
 }
 
 
@@ -1431,7 +1440,6 @@ void GalileoParser::Log() const {
             << std::endl;
 
 
-
   std::cout << "\nCounter: " << counter << std::endl;
   std::cout << "True: " << true_counter << std::endl;
   std::cout << "False: " << false_counter << std::endl;
@@ -1443,21 +1451,23 @@ void GalileoParser::Warn() const { std::cout << "WARNING!!!" << std::endl; }
 
 template <typename T> void SpaceVehicle::add_type1(T word, unsigned int type, unsigned int svId) {
 
+  svId_ = svId;
   issue_of_data_ = word.issue_of_data;
   ref_time_ = word.reference_time * 60; // scale factor 60
-  mean_anomaly_ = word.mean_anomaly * 2e-31; // scale factor  2e-31
-  eccentricity_ = word.eccentricity * 2e-33; // scale factor 2e-33
-  semi_major_root_ = word.root_semi_major_axis * 2e-19; // scale factor 2e-19
+  mean_anomaly_ = word.mean_anomaly * pow(2, -31) * M_PI; // scale factor  2e-31
+  eccentricity_ = word.eccentricity * pow(2, -33); // scale factor 2e-33
+  semi_major_root_ = word.root_semi_major_axis * pow(2, -19); // scale factor 2e-19
+
 }
 
 
 template <typename T> void SpaceVehicle::add_type2(T word, unsigned int type, unsigned int svId) {
 
   issue_of_data_ = word.issue_of_data; 
-  omega0_ = word.longitude * 2e-31; // scale factor 2e-31 
-  inclination_angle_ = word.inclination_angle * 2e-31; // scale factor 2e-31
-  omega_ = word.perigee * 2e-31; // scale factor 2e-31 
-  roc_inclination_angle_ = word.ia_rate_of_change * 2e-43; // scale factor 2e-43 
+  omega0_ = word.longitude * pow(2, -31) * M_PI; // scale factor 2e-31 
+  inclination_angle_ = word.inclination_angle * pow(2, -31) * M_PI; // scale factor 2e-31
+  omega_ = word.perigee * pow(2, -31) * M_PI; // scale factor 2e-31 
+  roc_inclination_angle_ = word.ia_rate_of_change * pow(2, -43) * M_PI; // scale factor 2e-43 
 }
 
 
@@ -1466,12 +1476,12 @@ template <typename T> void SpaceVehicle::add_type2(T word, unsigned int type, un
 template <typename T> void SpaceVehicle::add_type3(T word, unsigned int type, unsigned int svId) {
 
   issue_of_data_ = word.issue_of_data; 
-  omega_dot_ = word.ra_rate_of_change * 2e-43; // scale factor 2e-43
-  delta_n_ = word.mean_motion_difference * 2e-43; // scale factor 2e-43 
-  cuc_ = word.C_uc * 2e-29; // scale factor 2e-29 
-  cus_ = word.C_us * 2e-29; // scale factor 2e-29 
-  crc_ = word.C_rc * 2e-5; // scale factor 2e-5 
-  crs_ = word.C_rs * 2e-5; // scale factor 2e-5 
+  omega_dot_ = word.ra_rate_of_change * pow(2, -43) * M_PI; // scale factor 2e-43
+  delta_n_ = word.mean_motion_difference * pow(2, -43) * M_PI; // scale factor 2e-43 
+  cuc_ = word.C_uc * pow(2, -29); // scale factor 2e-29 
+  cus_ = word.C_us * pow(2, -29); // scale factor 2e-29 
+  crc_ = word.C_rc * pow(2, -5); // scale factor 2e-5 
+  crs_ = word.C_rs * pow(2, -5); // scale factor 2e-5 
   sisa_ = word.sisa;
 }
 
@@ -1480,12 +1490,12 @@ template <typename T> void SpaceVehicle::add_type3(T word, unsigned int type, un
 template <typename T> void SpaceVehicle::add_type4(T word, unsigned int type, unsigned int svId) { // svid not included
 
   issue_of_data_ = word.issue_of_data; 
-  cic_ = word.C_ic * 2e-29; // scale factor 2e-29
-  cis_ = word.C_is * 2e-29; // scale factor 2e-29
+  cic_ = word.C_ic * pow(2, -29); // scale factor 2e-29
+  cis_ = word.C_is * pow(2, -29); // scale factor 2e-29
   epoch_ = word.reference * 60; // scale factor 60
-  clock_bias_ = word.clock_bias_corr * 2e-34; // scale factor 2e-34
-  clock_drift_ = word.clock_drift_corr * 2e-46; // scale factor 2e-46
-  clock_drift_rate_ = word.clock_drift_rate_corr * 2e-59; // scale factor 2e-59
+  clock_bias_ = word.clock_bias_corr * pow(2, -34); // scale factor 2e-34
+  clock_drift_ = word.clock_drift_corr * pow(2, -46); // scale factor 2e-46
+  clock_drift_rate_ = word.clock_drift_rate_corr * pow(2, -59); // scale factor 2e-59
 }
 
 
@@ -1494,19 +1504,17 @@ template <typename T> void SpaceVehicle::add_type5(T word, unsigned int type, un
   // effionl_0, effionl_1, effionl_2, region1, region2, region3, region4, region5 not included
 
   if (!flag1_) {
-    gal_ai0_ = word.effionl_0 * 2e-2;
-    gal_ai1_ = word.effionl_1 * 2e-8;
-    gal_ai2_ = word.effionl_2 * 2e-15;
+    gal_ai0_ = word.effionl_0 * pow(2, -2); // pow(10, -22)
+    gal_ai1_ = word.effionl_1 * pow(2, -8);
+    gal_ai2_ = word.effionl_2 * pow(2, -15);
 
     flag1_ = true;
   }
 
-  bgd1_ = word.bgd_1 * 2e-32; // scale factor 2e-32
-  bgd2_ = word.bgd_2 * 2e-32; // scale factor 2e-32
+  bgd1_ = word.bgd_1 * pow(2, -32); // scale factor 2e-32
+  bgd2_ = word.bgd_2 * pow(2, -32); // scale factor 2e-32
 
-  /*
-  Figure sth out for signal health and data validity status
-  */
+  sig_health_validity_ = word.sig_health_validity;
 
   week_num_ = word.week_num; // scale factor 1
 
@@ -1516,8 +1524,8 @@ template <typename T> void SpaceVehicle::add_type5(T word, unsigned int type, un
 template <typename T> void SpaceVehicle::add_type6(T word, unsigned int type, unsigned int svId) {
 
   if (!flag2_) {
-    gaut_a0_ = word.A0 * 2e-30;
-    gaut_a1_ = word.A1 * 2e-50;
+    gaut_a0_ = word.A0 * pow(2, -30);
+    gaut_a1_ = word.A1 * pow(2, -50);
     gaut_tow_ = word.utc_reference_tow * 3600;
     gaut_week_ = word.utc_reference_week;
 
@@ -1545,8 +1553,8 @@ template <typename T> void SpaceVehicle::add_type9(T word, unsigned int type, un
 template <typename T> void SpaceVehicle::add_type10(T word, unsigned int type, unsigned int svId) {
   
   if (!flag3_) {
-    gpga_a0g_ = word.const_term_offset * 2e-35;
-    gpga_a1g_ = word.roc_offset * 2e-51;
+    gpga_a0g_ = word.const_term_offset * pow(2, -35);
+    gpga_a1g_ = word.roc_offset * pow(2, -51);
     gpga_tow_ = word.ref_time * 3600;
     gpga_week_ = word.week_num;
 
@@ -1557,15 +1565,18 @@ template <typename T> void SpaceVehicle::add_type10(T word, unsigned int type, u
 
 bool SpaceVehicle::check_full(unsigned int type) {
 
-  if (flag1_ && flag2_ && flag3_ && !flag4_) {flag4_ = true;}
+  if (flag1_ && flag2_ && flag3_ && !flag4_) {
+    write_header();
+    flag4_ = true;
+  }
 
   if (clock_bias_ != INIT && clock_drift_ != INIT && clock_drift_rate_ != INIT && issue_of_data_ != INIT &&
       crs_ != INIT && delta_n_ != INIT && mean_anomaly_ != INIT && cuc_ != INIT &&
       eccentricity_ != INIT && cus_ != INIT && semi_major_root_ != INIT && ref_time_ != INIT &&
       cic_ != INIT && omega0_ != INIT && cis_ != INIT && inclination_angle_ != INIT &&
       crc_ != INIT && omega_ != INIT && omega_dot_ != INIT && roc_inclination_angle_ != INIT &&
-      week_num_ != INIT && sisa_ != INIT && bgd1_ != INIT && bgd2_ != INIT && epoch_ != INIT) {
-        write(nav_data_file_);
+      sisa_ != INIT && bgd1_ != INIT && bgd2_ != INIT) {
+        write();
         reset();
         return true;
       }
@@ -1575,7 +1586,7 @@ bool SpaceVehicle::check_full(unsigned int type) {
 }
 
 void SpaceVehicle::reset() {
-  epoch_ = INIT;
+  epoch_ = 0;
   clock_bias_ = INIT;
   clock_drift_ = INIT;
   clock_drift_rate_ = INIT;
@@ -1596,15 +1607,69 @@ void SpaceVehicle::reset() {
   omega_ = INIT;
   omega_dot_ = INIT;
   roc_inclination_angle_ = INIT;
-  week_num_ = INIT;
+  week_num_ = 0;
   sisa_ = INIT;
   sig_health_validity_ = INIT;
   bgd1_ = INIT;
   bgd2_ = INIT;
 }
 
-void SpaceVehicle::write(std::ofstream& nav_data_file_) {
-  
-  nav_data_file_ << "denemeler denemeler" << "\n" << "\tvesaire";
+void SpaceVehicle::write() {
+
+  std::cout.precision(15);
+
+  std::cout << "\nE" << svId_ << std::fixed << "\t" << epoch_ << " " << (int)floor((epoch_ % 86400) / 3600) << " " << ((epoch_ % 3600) % 3600) / 60 
+            << std::scientific << "\t" << clock_bias_  << "\t" << clock_drift_ << "\t" << clock_drift_rate_ << "\n";
+
+  std::cout << "  \t" << issue_of_data_ << "\t" << crs_ 
+                 << "\t" << delta_n_ << "\t" << mean_anomaly_ << "\n";
+
+  std::cout << "  \t" << cuc_ << "\t" << eccentricity_ 
+                 << "\t" << cus_ << "\t" << semi_major_root_ << "\n";
+
+  std::cout << "  \t" << ref_time_ << "\t" << cic_ 
+                 << "\t" << omega0_ << "\t" << cis_ << "\n";
+
+  std::cout << "  \t" << inclination_angle_ << "\t" << crc_ 
+                 << "\t" << omega_ << "\t" << omega_dot_ << "\n";
+            
+  std::cout << "  \t" << roc_inclination_angle_ << "\t" << "\t"
+                 << "  \t" << week_num_ << "\t" << double(0) << "\n";
+
+  std::cout << "  \t" << sisa_ << "\t" << sig_health_validity_
+                 << "\t" << bgd1_ << "\t" << bgd2_ << "\n";  
+
+  //usleep(500000);
+
+  nav_data_file_ << "\nE" << svId_ << "\t" << epoch_ << " " << floor((epoch_ % 86400) / 3600) << " " << ((epoch_ % 3600) % 3600) / 60 << "\t" << clock_bias_ 
+                 << "\t" << clock_drift_ << "\t" << clock_drift_rate_ << "\n";
+
+  nav_data_file_ << "  \t" << issue_of_data_ << "\t" << crs_ 
+                 << "\t" << delta_n_ << "\t" << mean_anomaly_ << "\n";
+
+  nav_data_file_ << "  \t" << cuc_ << "\t" << eccentricity_ 
+                 << "\t" << cus_ << "\t" << semi_major_root_ << "\n";
+
+  nav_data_file_ << "  \t" << ref_time_ << "\t" << cic_ 
+                 << "\t" << omega0_ << "\t" << cis_ << "\n";
+
+  nav_data_file_ << "  \t" << inclination_angle_ << "\t" << crc_ 
+                 << "\t" << omega_ << "\t" << omega_dot_ << "\n";
+            
+  nav_data_file_ << "  \t" << roc_inclination_angle_ << "\t" << "\t"
+                 << "  \t" << week_num_ << "\t" << double(0) << "\n";
+
+  nav_data_file_ << "  \t" << sisa_ << "\t" << sig_health_validity_
+                 << "\t" << bgd1_ << "\t" << bgd2_ << "\n";
+
+}
+
+void SpaceVehicle::write_header() {
+
+  nav_data_file_ << "\n\n";
+  nav_data_file_ << "\t\tHEADER\n";
+  nav_data_file_ << "GAL\t" << gal_ai0_ << "\t" << gal_ai1_ << "\t" << gal_ai2_ << "\tIONOSPHERIC CORR\n";
+  nav_data_file_ << "GAUT\t" << gaut_a0_ << "\t" << gaut_a1_ << "\t" << gaut_tow_ << "\t" << gaut_week_ << "\tTIME SYSTEM CORR\n";
+  nav_data_file_ << "GPGA\t" << gpga_a0g_ << "\t" << gpga_a1g_ << "\t" << gpga_tow_ << "\t" << gpga_week_ << "\tTIME SYSTEM CORR\n\n";
 
 }

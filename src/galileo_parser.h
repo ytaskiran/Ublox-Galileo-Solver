@@ -7,14 +7,15 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <cmath>
 
-
-std::ofstream nav_data_file_("output_navdata.txt");
 
 class SpaceVehicle {
 private:
 
-  double epoch_ = INIT;
+  unsigned int svId_;
+
+  unsigned int epoch_;
   double clock_bias_ = INIT;
   double clock_drift_ = INIT;
   double clock_drift_rate_ = INIT;
@@ -35,7 +36,7 @@ private:
   double omega_ = INIT;
   double omega_dot_ = INIT;
   double roc_inclination_angle_ = INIT;
-  double week_num_ = INIT;
+  unsigned int week_num_;
   double sisa_ = INIT;
   double sig_health_validity_ = INIT;
   double bgd1_ = INIT;
@@ -76,7 +77,8 @@ public:
   template <typename T> void add_type10(T word, unsigned int type, unsigned int svId);
   void reset();
   bool check_full(unsigned int type);
-  void write(std::ofstream& nav_data_file_);
+  void write();
+  void write_header();
 };
 
 
@@ -114,7 +116,8 @@ private:
   unsigned int pos_;
 
   unsigned long long mask1_ = 0x3F00C0000000;
-  unsigned long long mask2_ = 0xFFFFC0003FFFC000;
+  unsigned long long mask2_ = 0xFFFFC00000000000;
+  unsigned long long mask3_ = 0x3FFFC000;
 
   enum MessageType { UBX_RXM_SFRBX, UBX_NAV_SIG, NOT_DEFINED } msg_type_;
 
@@ -283,6 +286,7 @@ public:
     unsigned sig_health_e1 : 2;
     unsigned data_validity_e5b : 1;
     unsigned data_validity_e1 : 1;
+    unsigned sig_health_validity;
     unsigned week_num : 12;
     unsigned time_of_week : 20;
     unsigned spare : 23;
