@@ -1149,7 +1149,7 @@ template <typename T>
 void GalileoSolver::MaskWordUtilMiddle(T &dword_util) 
 {
   pos_ = 0;
-  dword_util = dword_util & mask1_;
+  dword_util = dword_util & MASK1_;
   dword_util = (dword_util << 18) | (dword_util << 26);
 }
 
@@ -1158,8 +1158,8 @@ template <typename T>
 void GalileoSolver::MaskWordDataMiddle(T &dword_data) 
 {
   pos_ = 0;
-  T dword_data1 = dword_data & mask2_;
-  T dword_data2 = dword_data & mask3_;
+  T dword_data1 = dword_data & MASK2_;
+  T dword_data2 = dword_data & MASK3_;
   dword_data = (dword_data1) | (dword_data2 << 16);
 }
 
