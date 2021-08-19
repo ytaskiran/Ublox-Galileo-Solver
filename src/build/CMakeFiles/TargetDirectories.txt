@@ -1,4 +1,4 @@
 /home/cezeri/galileo/src/build/CMakeFiles/rebuild_cache.dir
 /home/cezeri/galileo/src/build/CMakeFiles/edit_cache.dir
 /home/cezeri/galileo/src/build/CMakeFiles/galileo.dir
-/home/cezeri/galileo/src/build/CMakeFiles/galileo_parser.dir
+/home/cezeri/galileo/src/build/CMakeFiles/galileo_solver.dir

@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/cezeri/galileo/src/build
 
 # The main recursive "all" target.
 all: CMakeFiles/galileo.dir/all
-all: CMakeFiles/galileo_parser.dir/all
+all: CMakeFiles/galileo_solver.dir/all
 
 .PHONY : all
 
@@ -65,7 +65,7 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/galileo.dir/clean
-clean: CMakeFiles/galileo_parser.dir/clean
+clean: CMakeFiles/galileo_solver.dir/clean
 
 .PHONY : clean
 
@@ -73,7 +73,7 @@ clean: CMakeFiles/galileo_parser.dir/clean
 # Target rules for target CMakeFiles/galileo.dir
 
 # All Build rule for target.
-CMakeFiles/galileo.dir/all: CMakeFiles/galileo_parser.dir/all
+CMakeFiles/galileo.dir/all: CMakeFiles/galileo_solver.dir/all
 	$(MAKE) -f CMakeFiles/galileo.dir/build.make CMakeFiles/galileo.dir/depend
 	$(MAKE) -f CMakeFiles/galileo.dir/build.make CMakeFiles/galileo.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/cezeri/galileo/src/build/CMakeFiles --progress-num=1,2 "Built target galileo"
@@ -97,31 +97,31 @@ CMakeFiles/galileo.dir/clean:
 .PHONY : CMakeFiles/galileo.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/galileo_parser.dir
+# Target rules for target CMakeFiles/galileo_solver.dir
 
 # All Build rule for target.
-CMakeFiles/galileo_parser.dir/all:
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/depend
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/cezeri/galileo/src/build/CMakeFiles --progress-num=3,4 "Built target galileo_parser"
-.PHONY : CMakeFiles/galileo_parser.dir/all
+CMakeFiles/galileo_solver.dir/all:
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/depend
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/cezeri/galileo/src/build/CMakeFiles --progress-num=3,4 "Built target galileo_solver"
+.PHONY : CMakeFiles/galileo_solver.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/galileo_parser.dir/rule: cmake_check_build_system
+CMakeFiles/galileo_solver.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/cezeri/galileo/src/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/galileo_parser.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/galileo_solver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/cezeri/galileo/src/build/CMakeFiles 0
-.PHONY : CMakeFiles/galileo_parser.dir/rule
+.PHONY : CMakeFiles/galileo_solver.dir/rule
 
 # Convenience name for target.
-galileo_parser: CMakeFiles/galileo_parser.dir/rule
+galileo_solver: CMakeFiles/galileo_solver.dir/rule
 
-.PHONY : galileo_parser
+.PHONY : galileo_solver
 
 # clean rule for target.
-CMakeFiles/galileo_parser.dir/clean:
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/clean
-.PHONY : CMakeFiles/galileo_parser.dir/clean
+CMakeFiles/galileo_solver.dir/clean:
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/clean
+.PHONY : CMakeFiles/galileo_solver.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

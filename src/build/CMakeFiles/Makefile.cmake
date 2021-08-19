@@ -48,5 +48,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/galileo.dir/DependInfo.cmake"
-  "CMakeFiles/galileo_parser.dir/DependInfo.cmake"
+  "CMakeFiles/galileo_solver.dir/DependInfo.cmake"
   )

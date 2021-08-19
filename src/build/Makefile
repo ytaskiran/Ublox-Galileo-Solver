@@ -124,44 +124,44 @@ galileo/fast:
 .PHONY : galileo/fast
 
 #=============================================================================
-# Target rules for targets named galileo_parser
+# Target rules for targets named galileo_solver
 
 # Build rule for target.
-galileo_parser: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 galileo_parser
-.PHONY : galileo_parser
+galileo_solver: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 galileo_solver
+.PHONY : galileo_solver
 
 # fast build rule for target.
-galileo_parser/fast:
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/build
-.PHONY : galileo_parser/fast
+galileo_solver/fast:
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/build
+.PHONY : galileo_solver/fast
 
-galileo_parser.o: galileo_parser.cc.o
+galileo_solver.o: galileo_solver.cc.o
 
-.PHONY : galileo_parser.o
+.PHONY : galileo_solver.o
 
 # target to build an object file
-galileo_parser.cc.o:
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/galileo_parser.cc.o
-.PHONY : galileo_parser.cc.o
+galileo_solver.cc.o:
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/galileo_solver.cc.o
+.PHONY : galileo_solver.cc.o
 
-galileo_parser.i: galileo_parser.cc.i
+galileo_solver.i: galileo_solver.cc.i
 
-.PHONY : galileo_parser.i
+.PHONY : galileo_solver.i
 
 # target to preprocess a source file
-galileo_parser.cc.i:
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/galileo_parser.cc.i
-.PHONY : galileo_parser.cc.i
+galileo_solver.cc.i:
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/galileo_solver.cc.i
+.PHONY : galileo_solver.cc.i
 
-galileo_parser.s: galileo_parser.cc.s
+galileo_solver.s: galileo_solver.cc.s
 
-.PHONY : galileo_parser.s
+.PHONY : galileo_solver.s
 
 # target to generate assembly for a file
-galileo_parser.cc.s:
-	$(MAKE) -f CMakeFiles/galileo_parser.dir/build.make CMakeFiles/galileo_parser.dir/galileo_parser.cc.s
-.PHONY : galileo_parser.cc.s
+galileo_solver.cc.s:
+	$(MAKE) -f CMakeFiles/galileo_solver.dir/build.make CMakeFiles/galileo_solver.dir/galileo_solver.cc.s
+.PHONY : galileo_solver.cc.s
 
 main.o: main.cc.o
 
@@ -199,10 +199,10 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... galileo"
-	@echo "... galileo_parser"
-	@echo "... galileo_parser.o"
-	@echo "... galileo_parser.i"
-	@echo "... galileo_parser.s"
+	@echo "... galileo_solver"
+	@echo "... galileo_solver.o"
+	@echo "... galileo_solver.i"
+	@echo "... galileo_solver.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

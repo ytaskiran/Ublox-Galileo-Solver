@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/cezeri/galileo/src/galileo_solver.cc
+galileo_solver.h
+/home/cezeri/galileo/src/galileo_solver.h
+
 /home/cezeri/galileo/src/galileo_solver.h
 fstream
 -
@@ -18,11 +22,5 @@ unistd.h
 cmath
 -
 bitset
--
-
-/home/cezeri/galileo/src/main.cc
-galileo_solver.h
-/home/cezeri/galileo/src/galileo_solver.h
-memory
 -
 

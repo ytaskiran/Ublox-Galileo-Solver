@@ -1,5 +1,5 @@
-#ifndef GALILEO_GALILEO_PARSER_H
-#define GALILEO_GALILEO_PARSER_H
+#ifndef GALILEO_GALILEO_SOLVER_H
+#define GALILEO_GALILEO_SOLVER_H
 
 #define INIT 0.37
 
@@ -8,11 +8,12 @@
 #include <string>
 #include <unistd.h>
 #include <cmath>
+#include <bitset>
 
 
-class SpaceVehicle {
+class NavigationData 
+{
 private:
-
   unsigned int svId_;
 
   unsigned int epoch_;
@@ -43,7 +44,6 @@ private:
   double bgd2_ = INIT;
 
 private:
-
   double gal_ai0_;
   double gal_ai1_;
   double gal_ai2_;
@@ -57,14 +57,12 @@ private:
   unsigned gpga_week_;
 
 private: 
-
   bool flag1_ = false;
   bool flag2_ = false;
   bool flag3_ = false;
   bool flag4_ = false;
 
 public:
-
   template <typename T> void add_type1(T word, unsigned int type, unsigned int svId);
   template <typename T> void add_type2(T word, unsigned int type, unsigned int svId);
   template <typename T> void add_type3(T word, unsigned int type, unsigned int svId);
@@ -82,22 +80,13 @@ public:
 };
 
 
-class Header {
-
-
-public:
-  template <typename T> void add_type5(T word);
-  template <typename T> void add_type6(T word);
-  template <typename T> void add_type10(T word);
-};
-
-
-class GalileoParser {
+class GalileoSolver 
+{
 private:
   const std::string file_;
   std::ifstream raw_data_;
 
-  SpaceVehicle space_vehicle[36]{};
+  NavigationData space_vehicle[36]{};
 
   uint8_t byte_;
 
@@ -112,7 +101,6 @@ private:
   unsigned int false_counter = 0;
 
   unsigned short even_;
-
   unsigned int pos_;
 
   unsigned long long mask1_ = 0x3F00C0000000;
@@ -121,19 +109,26 @@ private:
 
   enum MessageType { UBX_RXM_SFRBX, UBX_NAV_SIG, NOT_DEFINED } msg_type_;
 
+
 #pragma pack(1)
-  struct MessageData {
+
+  struct MessageHead 
+  {
     uint8_t message_class;
     uint8_t message_id;
     uint16_t length;
-  } msg_data;
+  } msg_head;
 
-  struct CheckSumParams {
+
+  struct CheckSumParams 
+  {
     uint8_t ck_a;
     uint8_t ck_b;
   } checksum;
 
-  struct NavigationDataHead {
+
+  struct MessageDataHead 
+  {
     uint8_t gnssId;
     uint8_t svId;
     uint8_t reserved0;
@@ -144,17 +139,22 @@ private:
     uint8_t reserved1;
   } payload_sfrbx_head;
 
-  struct NavigationDataWordHead {
+
+  struct MessageDataWordHead 
+  {
     unsigned short even_odd : 1;
     unsigned short page_type : 1;
     unsigned short word_type : 6;
   } payload_data_word_head;
 
-  struct WordUtil {
+
+  struct WordUtil 
+  {
     unsigned short tail : 6;
     unsigned short even_odd : 1;
     unsigned short page_type : 1;
   } word_util;
+
 
 public:
 
@@ -167,7 +167,8 @@ public:
    * @param root_semi_major_axis A1/2 Square root of the semi-major axis
    *
    */
-  struct WordType1 {
+  struct WordType1 
+  {
     unsigned issue_of_data : 10;
     unsigned reference_time : 14;
     signed mean_anomaly : 32;
@@ -175,6 +176,7 @@ public:
     unsigned root_semi_major_axis : 32;
     unsigned reserved : 2;
   } word_type_1;
+
 
   /**
    * @brief Word Type 2: Ephemeris (2/4)
@@ -186,7 +188,8 @@ public:
    * @param ia_rate_of_change i^dot Rate of change of inclination angle
    *
    */
-  struct WordType2 {
+  struct WordType2 
+  {
     unsigned issue_of_data : 10;
     signed longitude : 32;
     signed inclination_angle : 32;
@@ -194,6 +197,7 @@ public:
     signed ia_rate_of_change : 14;
     unsigned reserved : 2;
   } word_type_2;
+
 
   /**
    * @brief Word Type 3: Ephemeris (3/4) and SISA
@@ -211,7 +215,8 @@ public:
    * @param sisa SISA Signal-In-Space Accuracy
    *
    */
-  struct WordType3 {
+  struct WordType3 
+  {
     unsigned issue_of_data : 10;
     signed ra_rate_of_change : 24;
     signed mean_motion_difference : 16;
@@ -221,6 +226,7 @@ public:
     signed C_rs : 16;
     unsigned sisa : 8;
   } word_type_3;
+
 
   /**
    * @brief Word Type 4: SVID, Ephemeris (4/4),
@@ -237,7 +243,8 @@ public:
    * @param clock_drift_rate_corr af2 SV clock drift rate correction coefficient
    *
    */
-  struct WordType4 {
+  struct WordType4 
+  {
     unsigned issue_of_data : 10;
     unsigned svid : 6;
     signed C_ic : 16;
@@ -248,6 +255,7 @@ public:
     signed clock_drift_rate_corr : 6;
     unsigned spare : 2;
   } word_type_4;
+
 
   /**
    * @brief Word Type 5: Ionospheric correction, BGD,
@@ -271,7 +279,8 @@ public:
    * @param time_of_week TOW Time of Week
    *
    */
-  struct WordType5 {
+  struct WordType5 
+  {
     unsigned effionl_0 : 11;
     signed effionl_1 : 11;
     signed effionl_2 : 14;
@@ -292,6 +301,7 @@ public:
     unsigned spare : 23;
   } word_type_5;
 
+
   /**
    * @brief Word Type 6: GST-UTC conversion parameters
    *
@@ -309,7 +319,8 @@ public:
    * @param time_of_week TOW Time of Week
    *
    */
-  struct WordType6 {
+  struct WordType6 
+  {
     signed A0 : 32;
     signed A1 : 24;
     signed ls_count_before : 8;
@@ -321,6 +332,7 @@ public:
     unsigned time_of_week : 20;
     unsigned spare : 3;
   } word_type_6;
+
 
   /**
    * @brief Almanac for SVID1 (1/2), almanac reference time and
@@ -342,7 +354,8 @@ public:
    * @param mean_anomaly M0 Satellite mean anomaly at reference time
    *
    */
-  struct WordType7 {
+  struct WordType7 
+  {
     unsigned issue_of_data : 4;
     unsigned week_num : 2;
     unsigned ref_time : 10;
@@ -356,6 +369,7 @@ public:
     signed mean_anomaly : 16;
     unsigned reserved : 6;
   } word_type_7;
+
 
   /**
    * @brief Word Type 8: Almanac for SVID1 (2/2) and SVID2 (1/2))
@@ -377,7 +391,8 @@ public:
    * @param roc_ra Ω^dot Rate of change of right ascension
    *
    */
-  struct WordType8 {
+  struct WordType8 
+  {
     unsigned issue_of_data : 4;
     signed clock_corr_bias : 16;
     signed clock_corr_linear : 13;
@@ -392,6 +407,7 @@ public:
     signed roc_ra : 11;
     unsigned spare : 1;
   } word_type_8;
+
 
   /**
    * @brief Word Type 9: Almanac for SVID2 (2/2) and SVID3 (1/2))
@@ -413,7 +429,8 @@ public:
    *                   reference time and the nominal inclination
    *
    */
-  struct WordType9 {
+  struct WordType9 
+  {
     unsigned issue_of_data : 4;
     unsigned week_num : 2;
     unsigned ref_time : 10;
@@ -428,6 +445,7 @@ public:
     signed perigee : 16;
     signed diff_ia_na : 11;
   } word_type_9;
+
 
   /**
    * @brief Word Type 10: Almanac for SVID3 (2/2)
@@ -448,7 +466,8 @@ public:
    * @param week_num WN0G Week Number of GGTO reference
    *
    */
-  struct WordType10 {
+  struct WordType10 
+  {
     unsigned issue_of_data : 4;
     signed longitude : 16;
     signed roc_ra : 11;
@@ -462,6 +481,7 @@ public:
     unsigned ref_time : 8;
     unsigned week_num : 6;
   } word_type_10;
+
 
   /**
    * @brief Word Type 16: Reduced Clock and Ephemeris Data (CED) parameters
@@ -482,7 +502,8 @@ public:
    *
    *
    */
-  struct WordType16 {
+  struct WordType16 
+  {
     signed delta_rced_smajor : 5;
     signed eccentricity_rced_x : 13;
     signed eccentricity_rced_y : 13;
@@ -493,23 +514,27 @@ public:
     signed rced_clock_corr_drift : 6;
   } word_type_16;
 
+
   /**
    * @brief Word types 17, 18, 19, 20: FEC2 Reed-Solomon
    *        for Clock and Ephemeris Data (CED)
    *
    */
-  struct WordType17 {
+  struct WordType17 
+  {
     unsigned fec2_1 : 8;
     unsigned lsb : 2;
     unsigned long long fec2_2 : 64;
     unsigned long long fec2_3 : 48; // 112
   } word_type_17;
 
+
   /**
    * @brief Word Type 0: I/NAV Spare Word
    *
    */
-  struct WordType0 {
+  struct WordType0 
+  {
     unsigned time : 2;
     unsigned long long spare : 64; // 88
     unsigned spare2 : 24;
@@ -517,20 +542,25 @@ public:
     unsigned time_of_week : 20;
   } word_type_0;
 
+
   /**
    * @brief Word Type 63: Dummy Message
    *
    */
   struct WordType63 {};
 
-  struct SignalInformationHead {
+
+  struct SignalInformationHead 
+  {
     uint32_t iTOW;
     uint8_t version;
     uint8_t numSigs;
     uint16_t reserved0;
   } payload_navsig_head;
 
-  struct SignalInformation {
+
+  struct SignalInformation 
+  {
     uint8_t gnssId;
     uint8_t svId;
     uint8_t sigId;
@@ -543,9 +573,12 @@ public:
     unsigned int sigFlags : 16;
     uint32_t reserved1;
   } payload_navsig;
+
 #pragma pack()
 
-  enum WordType {
+
+  enum WordType 
+  {
     SPARE,
     EPHEMERIS_1,
     EPHEMERIS_2,
@@ -562,8 +595,8 @@ public:
     DUMMY = 63
   } word_type_;
 
-private:
 
+private:
   unsigned int galileo_num_sfrbx_ = 0;
   unsigned int gps_num_sfrbx_ = 0;
   unsigned int sbas_num_sfrbx_ = 0;
@@ -635,20 +668,20 @@ private:
 
 
 public:
-  explicit GalileoParser(const std::string &path);
+  explicit GalileoSolver(const std::string &path);
 
   void Read();
   void CheckSyncHeaders(uint8_t &byte_);
   bool CheckSum(std::ifstream &raw_data_);
-  void ParseInitialData(std::ifstream &raw_data_, MessageType &msg_type);
+  void ParseInitialData(std::ifstream &raw_data_);
   bool ParsePayloadData(std::ifstream &raw_data_);
   bool ParseDataWord(std::ifstream &raw_data_, unsigned int dword);
   template <typename T> T GetDataWord();
   template <typename T> T GetWordMiddle();
   template <typename T> void MaskWordUtilMiddle(T& dword_util);
   template <typename T> void MaskWordDataMiddle(T& dword_data);
-  bool DetermineWordType(NavigationDataWordHead &payload_data_word_head);
-  void GnssCount(NavigationDataHead &payload);
+  bool DetermineWordType(MessageDataWordHead &payload_data_word_head);
+  void GnssCount(MessageDataHead &payload);
   void GnssCount(SignalInformation &payload);
   void ClassifySvid();
   template <typename T> void ConvertBits(T& x);
@@ -659,4 +692,4 @@ public:
 };
 
 
-#endif // GALILEO_GALILEO_PARSER_H
+#endif // GALILEO_GALILEO_SOLVER_H

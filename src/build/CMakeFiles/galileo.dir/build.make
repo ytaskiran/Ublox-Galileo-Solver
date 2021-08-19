@@ -79,7 +79,7 @@ galileo_EXTERNAL_OBJECTS =
 
 galileo: CMakeFiles/galileo.dir/main.cc.o
 galileo: CMakeFiles/galileo.dir/build.make
-galileo: libgalileo_parser.a
+galileo: libgalileo_solver.a
 galileo: CMakeFiles/galileo.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/cezeri/galileo/src/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable galileo"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/galileo.dir/link.txt --verbose=$(VERBOSE)
