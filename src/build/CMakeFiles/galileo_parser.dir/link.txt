@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgalileo_parser.a  CMakeFiles/galileo_parser.dir/galileo_parser.cc.o
-/usr/bin/ranlib libgalileo_parser.a
