@@ -675,7 +675,6 @@ public:
   void GnssCount(MessageDataHead &payload);
   void GnssCount(SignalInformation &payload);
   void ClassifySvid();
-  template <typename T> void ConvertBits(T& x);
   template <typename T> T GetBits(T x, int n);
   template <typename T> T ConcatenateBits(T data1, T data2, int size1, int size2);
   void Log() const;
