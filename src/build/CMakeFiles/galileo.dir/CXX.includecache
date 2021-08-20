@@ -19,6 +19,8 @@ cmath
 -
 bitset
 -
+cfloat
+-
 
 /home/cezeri/galileo/src/main.cc
 galileo_solver.h

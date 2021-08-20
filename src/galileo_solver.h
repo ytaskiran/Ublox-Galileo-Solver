@@ -1,14 +1,15 @@
 #ifndef GALILEO_GALILEO_SOLVER_H
 #define GALILEO_GALILEO_SOLVER_H
 
-#define INIT 0.37
-
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <unistd.h>
 #include <cmath>
 #include <bitset>
+#include <cfloat>
+
+#define INIT DBL_MAX
 
 
 class NavigationData 
