@@ -63,16 +63,7 @@ private:
   bool flag4_ = false;
 
 public:
-  template <typename T> void add_type1(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type2(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type3(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type4(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type5(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type6(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type7(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type8(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type9(T word, unsigned int type, unsigned int svId);
-  template <typename T> void add_type10(T word, unsigned int type, unsigned int svId);
+  template <class T> void add(T word, unsigned int type, unsigned int svId);
   void reset();
   bool check_full(unsigned int type);
   void write();
@@ -690,6 +681,130 @@ public:
   void Log() const;
   void Warn() const;
 };
+
+
+template <class T> 
+inline void NavigationData::add(T word, unsigned int type, unsigned int svId) {}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType1>(GalileoSolver::WordType1 word, unsigned int type, unsigned int svId) 
+{
+  svId_ = svId;
+  issue_of_data_ = word.issue_of_data;
+  ref_time_ = word.reference_time * 60; // scale factor 60
+  mean_anomaly_ = word.mean_anomaly * pow(2, -31) * M_PI; // scale factor  2e-31
+  eccentricity_ = word.eccentricity * pow(2, -33); // scale factor 2e-33
+  semi_major_root_ = word.root_semi_major_axis * pow(2, -19); // scale factor 2e-19
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType2>(GalileoSolver::WordType2 word, unsigned int type, unsigned int svId) 
+{
+  issue_of_data_ = word.issue_of_data; 
+  omega0_ = word.longitude * pow(2, -31) * M_PI; // scale factor 2e-31 
+  inclination_angle_ = word.inclination_angle * pow(2, -31) * M_PI; // scale factor 2e-31
+  omega_ = word.perigee * pow(2, -31) * M_PI; // scale factor 2e-31 
+  roc_inclination_angle_ = word.ia_rate_of_change * pow(2, -43) * M_PI; // scale factor 2e-43 
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType3>(GalileoSolver::WordType3 word, unsigned int type, unsigned int svId) 
+{
+  issue_of_data_ = word.issue_of_data; 
+  omega_dot_ = word.ra_rate_of_change * pow(2, -43) * M_PI; // scale factor 2e-43
+  delta_n_ = word.mean_motion_difference * pow(2, -43) * M_PI; // scale factor 2e-43 
+  cuc_ = word.C_uc * pow(2, -29); // scale factor 2e-29 
+  cus_ = word.C_us * pow(2, -29); // scale factor 2e-29 
+  crc_ = word.C_rc * pow(2, -5); // scale factor 2e-5 
+  crs_ = word.C_rs * pow(2, -5); // scale factor 2e-5 
+  sisa_ = word.sisa;
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType4>(GalileoSolver::WordType4 word, unsigned int type, unsigned int svId) // svid not included
+{
+  issue_of_data_ = word.issue_of_data; 
+  cic_ = word.C_ic * pow(2, -29); // scale factor 2e-29
+  cis_ = word.C_is * pow(2, -29); // scale factor 2e-29
+  epoch_ = word.reference * 60; // scale factor 60
+  clock_bias_ = word.clock_bias_corr * pow(2, -34); // scale factor 2e-34
+  clock_drift_ = word.clock_drift_corr * pow(2, -46); // scale factor 2e-46
+  clock_drift_rate_ = word.clock_drift_rate_corr * pow(2, -59); // scale factor 2e-59
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType5>(GalileoSolver::WordType5 word, unsigned int type, unsigned int svId) 
+{
+  if (!flag1_) 
+  {
+    gal_ai0_ = word.effionl_0 * pow(2, -2);
+    gal_ai1_ = word.effionl_1 * pow(2, -8);
+    gal_ai2_ = word.effionl_2 * pow(2, -15);
+    flag1_ = true;
+  }
+
+  bgd1_ = word.bgd_1 * pow(2, -32); // scale factor 2e-32
+  bgd2_ = word.bgd_2 * pow(2, -32); // scale factor 2e-32
+
+  sig_health_validity_ = word.sig_health_validity;
+
+  week_num_ = word.week_num; // scale factor 1
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType6>(GalileoSolver::WordType6 word, unsigned int type, unsigned int svId) 
+{
+  if (!flag2_) 
+  {
+    gaut_a0_ = word.A0 * pow(2, -30);
+    gaut_a1_ = word.A1 * pow(2, -50);
+    gaut_tow_ = word.utc_reference_tow * 3600;
+    gaut_week_ = word.utc_reference_week;
+    flag2_ = true;
+  }
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordType7 word, unsigned int type, unsigned int svId) 
+{
+  /*std::cout << "******************* ALMANAC ******************" << std::endl;
+  std::cout << "SV: " << svId << "\tAlmanac of: " << word.svid_1 << "\tWord Type: " << type << std::endl; 
+  std::cout << "IOD: " << word.issue_of_data << std::endl;
+  std::cout << "Week num: " << word.week_num << std::endl;
+  std::cout << "Ref time: " << word.ref_time << std::endl;
+  std::cout << "delta_root_a:  " << word.delta_root_a << std::endl;
+  std::cout << "eccentricity: " << word.eccentricity << std::endl;
+  std::cout << "perigee: " << word.perigee << std::endl;*/
+}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordType8 word, unsigned int type, unsigned int svId) {}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordType9 word, unsigned int type, unsigned int svId) {}
+
+
+template <> 
+inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordType10 word, unsigned int type, unsigned int svId) 
+{
+  if (!flag3_) 
+  {
+    gpga_a0g_ = word.const_term_offset * pow(2, -35);
+    gpga_a1g_ = word.roc_offset * pow(2, -51);
+    gpga_tow_ = word.ref_time * 3600;
+    gpga_week_ = word.week_num;
+    flag3_ = true;
+  }
+}
 
 
 #endif // GALILEO_GALILEO_SOLVER_H

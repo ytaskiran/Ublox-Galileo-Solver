@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/cezeri/galileo/src/build",
+  "command": "/usr/bin/c++      -o CMakeFiles/galileo.dir/main.cc.o -c /home/cezeri/galileo/src/main.cc",
+  "file": "/home/cezeri/galileo/src/main.cc"
+},
+{
+  "directory": "/home/cezeri/galileo/src/build",
+  "command": "/usr/bin/c++      -o CMakeFiles/galileo_solver.dir/galileo_solver.cc.o -c /home/cezeri/galileo/src/galileo_solver.cc",
+  "file": "/home/cezeri/galileo/src/galileo_solver.cc"
+}
+]
