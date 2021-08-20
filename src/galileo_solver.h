@@ -44,6 +44,25 @@ private:
   double bgd1_ = INIT;
   double bgd2_ = INIT;
 
+
+private:
+  double alm_issue_of_data_ = INIT;
+  unsigned int alm_week_num_;
+  unsigned int alm_ref_time_;
+  unsigned int alm_svid_;
+  double alm_delta_root_a_ = INIT;
+  double alm_eccentricity_ = INIT;
+  double alm_perigee_ = INIT;
+  double alm_diff_ia_na_ = INIT;
+  double alm_longitude_ = INIT;
+  double alm_roc_ra_ = INIT;
+  double alm_mean_anomaly_ = INIT;
+  double alm_clock_corr_bias_ = INIT;
+  double alm_clock_corr_linear_ = INIT;
+  uint8_t alm_sig_health_e5b_;
+  uint8_t alm_sig_health_e1_; 
+
+
 private:
   double gal_ai0_;
   double gal_ai1_;
@@ -771,28 +790,86 @@ inline void NavigationData::add<GalileoSolver::WordType6>(GalileoSolver::WordTyp
 }
 
 
+/*
+NOT TESTED 
+*/
 template <> 
 inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordType7 word, unsigned int type, unsigned int svId) 
 {
-  /*std::cout << "******************* ALMANAC ******************" << std::endl;
-  std::cout << "SV: " << svId << "\tAlmanac of: " << word.svid_1 << "\tWord Type: " << type << std::endl; 
-  std::cout << "IOD: " << word.issue_of_data << std::endl;
-  std::cout << "Week num: " << word.week_num << std::endl;
-  std::cout << "Ref time: " << word.ref_time << std::endl;
-  std::cout << "delta_root_a:  " << word.delta_root_a << std::endl;
-  std::cout << "eccentricity: " << word.eccentricity << std::endl;
-  std::cout << "perigee: " << word.perigee << std::endl;*/
+  alm_issue_of_data_ = word.issue_of_data;
+  alm_week_num_ = word.week_num;
+  alm_ref_time_ = word.ref_time * 600;
+  alm_svid_ = word.svid_1;
+  alm_delta_root_a_ = word.delta_root_a * pow(2, -9);
+  alm_eccentricity_ = word.eccentricity * pow(2, -16);
+  alm_perigee_ = word.perigee * pow(2, -15) * M_PI;
+  alm_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
+  alm_longitude_ = word.longitude * pow(2, -15) * M_PI;
+  alm_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
+  alm_mean_anomaly_ = word.mean_anomaly * pow(2, -15) * M_PI;
 }
 
 
+/*
+NOT TESTED 
+*/
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordType8 word, unsigned int type, unsigned int svId) {}
+inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordType8 word, unsigned int type, unsigned int svId)
+{
+  if (word.issue_of_data == alm_issue_of_data_)
+  {
+    alm_clock_corr_bias_ = word.clock_corr_bias * pow(2, -19);
+    alm_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
+    alm_sig_health_e5b_ = word.sig_health_e5b;
+    alm_sig_health_e1_ = word.sig_health_e1;
+  }
+
+  else
+  {
+    // reset almanac, write new function
+    alm_issue_of_data_ = word.issue_of_data;
+    alm_svid_ = word.svid_2;
+    alm_delta_root_a_ = word.delta_root_a * pow(2, -9);
+    alm_eccentricity_ = word.eccentricity * pow(2, -16);
+    alm_perigee_ = word.perigee * pow(2, -15) * M_PI;
+    alm_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
+    alm_longitude_ = word.longitude * pow(2, -15) * M_PI;
+    alm_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
+  }
+}
 
 
+/*
+NOT TESTED
+*/
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordType9 word, unsigned int type, unsigned int svId) {}
+inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordType9 word, unsigned int type, unsigned int svId)
+{
+  if (word.issue_of_data = alm_issue_of_data_)
+  {
+    alm_week_num_ = word.week_num;
+    alm_ref_time_ = word.ref_time * 600;
+    alm_mean_anomaly_ = word.mean_anomaly * pow(2, -15) * M_PI;
+    alm_clock_corr_bias_ = word.clock_corr_bias * pow(2, -19);
+    alm_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
+    alm_sig_health_e5b_ = word.sig_health_e5b;
+    alm_sig_health_e1_ = word.sig_health_e1;
+  }
 
+  else
+  {
+    // reset almanac function here
+    alm_svid_ = word.svid_3;
+    alm_delta_root_a_ = word.delta_root_a * pow(2, -9);
+    alm_eccentricity_ = word.eccentricity * pow(2, -16);
+    alm_perigee_ = word.perigee * pow(2, -15) * M_PI;
+    alm_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
+  }
+}
 
+/*
+NOT TESTED
+*/
 template <> 
 inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordType10 word, unsigned int type, unsigned int svId) 
 {
@@ -803,6 +880,20 @@ inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordTy
     gpga_tow_ = word.ref_time * 3600;
     gpga_week_ = word.week_num;
     flag3_ = true;
+  }
+
+  else
+  {
+    if (word.issue_of_data == alm_issue_of_data_)
+    {
+      alm_longitude_ = word.longitude * pow(2, -15) * M_PI;
+      alm_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
+      alm_mean_anomaly_ = word.mean_anomaly * pow(2, -15) * M_PI;
+      alm_clock_corr_bias_ = word.clock_corr_bias * pow(2, -19);
+      alm_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
+      alm_sig_health_e5b_ = word.sig_health_e5b;
+      alm_sig_health_e1_ = word.sig_health_e1;
+    }
   }
 }
 
