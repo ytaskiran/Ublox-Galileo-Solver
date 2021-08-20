@@ -95,9 +95,9 @@ private:
   unsigned short even_;
   unsigned int pos_;
 
-  const unsigned long long MASK1_ = 0x3F00C0000000;
-  const unsigned long long MASK2_ = 0xFFFFC00000000000;
-  const unsigned long long MASK3_ = 0x3FFFC000;
+  const uint64_t MASK1_ = 0x3F00C0000000;
+  const uint64_t MASK2_ = 0xFFFFC00000000000;
+  const uint64_t MASK3_ = 0x3FFFC000;
 
   enum MessageType { UBX_RXM_SFRBX, UBX_NAV_SIG, NOT_DEFINED } msg_type_;
 
