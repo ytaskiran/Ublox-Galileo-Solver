@@ -667,10 +667,10 @@ public:
   void ParseInitialData(std::ifstream &raw_data_);
   bool ParsePayloadData(std::ifstream &raw_data_);
   bool ParseDataWord(std::ifstream &raw_data_, unsigned int dword);
-  template <typename T> T GetDataWord();
-  template <typename T> T GetWordMiddle();
-  template <typename T> void MaskWordUtilMiddle(T& dword_util);
-  template <typename T> void MaskWordDataMiddle(T& dword_data);
+  uint32_t GetDataWord();
+  uint32_t GetWordMiddle();
+  void MaskWordUtilMiddle(uint64_t& dword_util);
+  void MaskWordDataMiddle(uint64_t& dword_data);
   bool DetermineWordType(MessageDataWordHead &payload_data_word_head);
   void GnssCount(MessageDataHead &payload);
   void GnssCount(SignalInformation &payload);
