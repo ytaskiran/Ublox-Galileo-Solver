@@ -136,7 +136,7 @@ bool GalileoSolver::ParsePayloadData(std::ifstream &raw_data_)
     if (!DetermineWordType(payload_data_word_head))
       return false;
 
-    if (!ParseDataWord(raw_data_, dword))
+    if (!ParseDataWord(raw_data_, dword, payload_sfrbx_head.svId))
       return false;
 
     true_counter++;
@@ -261,7 +261,7 @@ bool GalileoSolver::DetermineWordType(MessageDataWordHead &payload_data_word_hea
 }
 
 
-bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1)                              
+bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, uint32_t dword_1, uint8_t svId)                              
 {
 
   if (word_type_ == EPHEMERIS_1) // Word Type 1
@@ -307,8 +307,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_1.root_semi_major_axis = root_semi_major_axis;
     word_type_1.reserved = reserved;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {
@@ -368,8 +366,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_2.ia_rate_of_change = ia_rate_of_change;
     word_type_2.reserved = reserved;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {
@@ -433,8 +429,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_3.C_rs = C_rs;
     word_type_3.sisa = sisa;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {
@@ -500,8 +494,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_4.clock_drift_rate_corr = clock_drift_rate_corr;
     word_type_4.spare = spare;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {
@@ -591,8 +583,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_5.spare = spare;
 
 
-    unsigned int svId = payload_sfrbx_head.svId;
-
     for (int i=0; i<36; i++) 
     {
       if (i+1 == svId) 
@@ -657,8 +647,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_6.time_of_week = time_of_week;
     word_type_6.spare = spare;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {
@@ -731,8 +719,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_7.reserved = reserved;
 
 
-    unsigned int svId = payload_sfrbx_head.svId;
-
     for (int i=0; i<36; i++) 
     {
       if (i+1 == svId) 
@@ -804,8 +790,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_8.roc_ra = roc_ra;
     word_type_8.spare = spare;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {
@@ -880,8 +864,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_9.diff_ia_na = diff_ia_na;
 
 
-    unsigned int svId = payload_sfrbx_head.svId;
-
     for (int i=0; i<36; i++) 
     {
       if (i+1 == svId) 
@@ -952,8 +934,6 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     word_type_10.ref_time = ref_time;
     word_type_10.week_num = week_num;
 
-
-    unsigned int svId = payload_sfrbx_head.svId;
 
     for (int i=0; i<36; i++) 
     {

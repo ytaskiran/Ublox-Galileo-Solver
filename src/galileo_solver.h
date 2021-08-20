@@ -667,7 +667,7 @@ public:
   bool CheckSum(std::ifstream &raw_data_);
   void ParseInitialData(std::ifstream &raw_data_);
   bool ParsePayloadData(std::ifstream &raw_data_);
-  bool ParseDataWord(std::ifstream &raw_data_, unsigned int dword);
+  bool ParseDataWord(std::ifstream &raw_data_, uint32_t dword, uint8_t svId);
   uint32_t GetDataWord();
   uint32_t GetWordMiddle();
   void MaskWordUtilMiddle(uint64_t& dword_util);
