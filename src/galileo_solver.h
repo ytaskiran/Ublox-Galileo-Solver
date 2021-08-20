@@ -57,11 +57,11 @@ private:
   unsigned gpga_tow_;
   unsigned gpga_week_;
 
-private: 
-  bool flag1_ = false;
-  bool flag2_ = false;
-  bool flag3_ = false;
-  bool flag4_ = false;
+public: 
+  static bool flag1_;
+  static bool flag2_;
+  static bool flag3_;
+  static bool flag4_;
 
 public:
   template <class T> void add(T word, unsigned int type, unsigned int svId);

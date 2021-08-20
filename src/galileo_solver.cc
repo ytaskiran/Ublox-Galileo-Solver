@@ -1409,6 +1409,11 @@ void GalileoSolver::Log() const
 void GalileoSolver::Warn() const { std::cout << "WARNING!!!" << std::endl; }
 
 
+bool NavigationData::flag1_ = false;
+bool NavigationData::flag2_ = false;
+bool NavigationData::flag3_ = false;
+bool NavigationData::flag4_ = false;
+
 
 bool NavigationData::check_full(unsigned int type) 
 {
@@ -1524,4 +1529,14 @@ void NavigationData::write_header()
   nav_data_file_ << "GAL\t" << gal_ai0_ << "\t" << gal_ai1_ << "\t" << gal_ai2_ << "\tIONOSPHERIC CORR\n";
   nav_data_file_ << "GAUT\t" << gaut_a0_ << "\t" << gaut_a1_ << "\t" << gaut_tow_ << "\t" << gaut_week_ << "\tTIME SYSTEM CORR\n";
   nav_data_file_ << "GPGA\t" << gpga_a0g_ << "\t" << gpga_a1g_ << "\t" << gpga_tow_ << "\t" << gpga_week_ << "\tTIME SYSTEM CORR\n\n";
+
+  std::cout.precision(12);
+
+  std::cout << "\n\n";
+  std::cout << "\t\tHEADER\n";
+  std::cout << "GAL\t" << std::scientific << gal_ai0_ << "\t" << gal_ai1_ << "\t" << gal_ai2_ << "\tIONOSPHERIC CORR\n";
+  std::cout << "GAUT\t" << gaut_a0_ << "\t" << gaut_a1_ << "\t" << std::fixed << gaut_tow_ << "\t" << gaut_week_ << "\tTIME SYSTEM CORR\n";
+  std::cout << "GPGA\t" << std::scientific << gpga_a0g_ << "\t" << gpga_a1g_ << "\t" << std::fixed << gpga_tow_ << "\t" << gpga_week_ << "\tTIME SYSTEM CORR\n\n";
+
+  std::cin.get();
 }
