@@ -1,9 +1,6 @@
 #include "galileo_solver.h"
 
 
-std::ofstream nav_data_file_("../../data/output_navdata.txt");
-
-
 GalileoSolver::GalileoSolver(const std::string &path) : file_(path) {}
 
 
@@ -317,8 +314,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_1, 1, svId);
-        space_vehicle[i].check_full(1);
+        nav_data[i].add(word_type_1, 1, svId);
+        nav_data[i].check_full(1);
       }
     }
     return true;
@@ -378,8 +375,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_2, 2, svId);
-        space_vehicle[i].check_full(2);
+        nav_data[i].add(word_type_2, 2, svId);
+        nav_data[i].check_full(2);
       }
     }
     return true;
@@ -443,8 +440,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_3, 3, svId);
-        space_vehicle[i].check_full(3);
+        nav_data[i].add(word_type_3, 3, svId);
+        nav_data[i].check_full(3);
       }
     }
     return true;
@@ -510,8 +507,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_4, 4, svId);
-        space_vehicle[i].check_full(4);
+        nav_data[i].add(word_type_4, 4, svId);
+        nav_data[i].check_full(4);
       }
     }
     return true;
@@ -600,8 +597,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_5, 5, svId);
-        space_vehicle[i].check_full(5);
+        nav_data[i].add(word_type_5, 5, svId);
+        nav_data[i].check_full(5);
       }
     }
     return true;
@@ -667,8 +664,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_6, 6, svId);
-        space_vehicle[i].check_full(6);
+        nav_data[i].add(word_type_6, 6, svId);
+        nav_data[i].check_full(6);
       }
     }
     return true;
@@ -740,8 +737,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_7, 7, svId);
-        space_vehicle[i].check_full(7);
+        nav_data[i].add(word_type_7, 7, svId);
+        nav_data[i].check_full(7);
       }
     }
     return true;
@@ -814,8 +811,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_8, 8, svId);
-        space_vehicle[i].check_full(8);
+        nav_data[i].add(word_type_8, 8, svId);
+        nav_data[i].check_full(8);
       }
     }
     return true;
@@ -889,8 +886,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_9, 9, svId);
-        space_vehicle[i].check_full(9);
+        nav_data[i].add(word_type_9, 9, svId);
+        nav_data[i].check_full(9);
       }
     }
     return true;
@@ -962,8 +959,8 @@ bool GalileoSolver::ParseDataWord(std::ifstream &raw_data_, unsigned int dword_1
     {
       if (i+1 == svId) 
       {
-        space_vehicle[i].add(word_type_10, 10, svId);
-        space_vehicle[i].check_full(10);
+        nav_data[i].add(word_type_10, 10, svId);
+        nav_data[i].check_full(10);
       }
     }
     return true;
@@ -1407,6 +1404,9 @@ void GalileoSolver::Log() const
 
 
 void GalileoSolver::Warn() const { std::cout << "WARNING!!!" << std::endl; }
+
+
+std::ofstream nav_data_file_("../../data/output_navdata.txt");
 
 
 bool NavigationData::flag1_ = false;

@@ -78,7 +78,7 @@ private:
   const std::string file_;
   std::ifstream raw_data_;
 
-  NavigationData space_vehicle[36]{};
+  NavigationData nav_data[36]{};
 
   uint8_t byte_;
 
