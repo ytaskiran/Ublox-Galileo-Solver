@@ -11,10 +11,48 @@
 
 #define INIT DBL_MAX
 
-
+/**
+ * @brief Encapsulates the navigation data and provides functions that
+ *        are capable of managing a set of data. This class will have 36 
+ *        instances that each represents a navigation data batch of a 
+ *        satellite from the constellation
+ * 
+ */
 class NavigationData 
 {
 private:
+  /**
+   * @brief Ephemeris navigation data
+   * 
+   * @param svId_                  Space Vehicle ID - Satellite number
+   * @param epoch_                 Toc - Time of Clock GALyear - month, day, hour, minute, second
+   * @param clock_bias_            SV clock bias (seconds) af0
+   * @param clock_drift_           SV clock drift (sec/sec) af1
+   * @param clock_drift_rate_      SV clock drift rate (sec/sec2) af2
+   * @param issue_of_data_         Issue of Data of the navigation batch
+   * @param crs_                   Amplitude of the sine harmonic correction term of the orbit radius [m]
+   * @param delta_n_               Mean motion difference from computed value [rad/s]
+   * @param mean_anomaly_          Mean anomaly at reference time [rad]
+   * @param cuc_                   Amplitude of the cosine harmonic correction term to the argument of latitude [rad]
+   * @param eccentricity_          Eccentricity
+   * @param cus_                   Amplitude of the sine harmonic correction term to the argument of latitude [rad]
+   * @param semi_major_root_       Square root of the semi-major axis [sqrt(meters)]
+   * @param ref_time_              Time of Ephemeris [s]
+   * @param cic_                   Amplitude of the cosine harmonic correction term to the angle of inclination [rad]
+   * @param omega0_                Longitude of ascending node of orbital plane at weekly epoch [rad]
+   * @param cis_                   Amplitude of the sine harmonic correction term to the angle of inclination [rad]
+   * @param inclination_angle_     Inclination angle at reference time [rad]
+   * @param crc_                   Amplitude of the cosine harmonic correction term to the orbit radius [m]
+   * @param omega_                 Argument of perigee [rad]
+   * @param omega_dot_             Rate of change of right ascension [rad/s]
+   * @param roc_inclination_angle_ Rate of change of inclination angle [rad/s]
+   * @param week_num_              GAL Week Number
+   * @param sisa_                  Signal in Space Accuracy [m] (Index right now, not meter)
+   * @param sig_health_validity_   Signal health and data validity status of both frequency signals (E1, E5b)
+   * @param bgd1_                  Broadcast Group Delay of E5a/E1 [s]
+   * @param bgd2_                  Broadcast Group Delay of E5b/E1 [s]
+   * 
+   */
   unsigned int svId_;
 
   unsigned int epoch_;
@@ -46,6 +84,11 @@ private:
 
 
 private:
+  /**
+   * @brief Almanac data. Naming is the same as page type member structs.
+   *        Page Type 7, 8, 9, 10
+   * 
+   */
   double alm_issue_of_data_ = INIT;
   unsigned int alm_week_num_;
   unsigned int alm_ref_time_;
@@ -64,6 +107,24 @@ private:
 
 
 private:
+  /**
+   * @brief Ionospheric and Time System Correction Parameters
+   * 
+   * @param gal_ai0_   ai0: effective ionisation level 1st order parameter
+   * @param gal_ai1_   ai1: effective ionisation level 2nd order parameter
+   * @param gal_ai2_   ai2: effective ionisation level 3rd order parameter
+   *  
+   * @param gaut_a0_   A0: constant term of polynomial
+   * @param gaut_a1_   A1: 1st order term of polynomial
+   * @param gaut_tow_  UTC data reference Time of Week
+   * @param gaut_week_ UTC data reference Week Number	
+   * 
+   * @param gpga_a0g_  A0G: constant term of the offset	
+   * @param gpga_a1g_  A1G: rate of change of the offset
+   * @param gpga_tow_  Reference time for polynomial	
+   * @param gpga_week_ Reference Week Number
+   * 
+   */
   double gal_ai0_;
   double gal_ai1_;
   double gal_ai2_;
@@ -77,33 +138,85 @@ private:
   unsigned gpga_week_;
 
 public: 
+  /**
+   * @brief These flags makes sure the joint Ionospheric and Time System Correction
+   *        parameters are proccessed once
+   * 
+   */
   static bool flag1_;
   static bool flag2_;
   static bool flag3_;
   static bool flag4_;
 
 public:
+  /**
+   * @brief Assigns the words read to the navigation data batch member variables
+   *        according to related page types. This template function is defined
+   *        at the bottom of this header file with primary template and 
+   *        explicit template specialization design.
+   * 
+   * @tparam T 
+   * @param word Data word member struct 
+   * @param type Page type 
+   * @param svId Satellite ID
+   */
   template <class T> void add(T word, unsigned int type, unsigned int svId);
+
+
+  /**
+   * @brief Resets the member variables to INIT values after writing operation 
+   *        when the data batch is fully assigned
+   * 
+   */
   void reset();
-  bool check_full(unsigned int type);
+
+
+  /**
+   * @brief Checks whether the navigation data batch is full or not.
+   *        If it is full, then calls write and and reset functions.
+   *        Also checks if the header information is obtained.
+   * 
+   * @param type Page type
+   */
+  void checkFull(unsigned int type);
+
+
+  /**
+   * @brief Writes the data to console and a file. This function is 
+   *        actually designed to be as an example. Users can implement
+   *        their own function to meet their needs after receiving a
+   *        full batch of navigation data.
+   * 
+   */
   void write();
-  void write_header();
+
+
+  /**
+   * @brief Writes the header data that contains joint Ionospheric and
+   *        Time System Correction parameters. Users can implement
+   *        their own function to meet their needs
+   * 
+   */
+  void writeHeader();
 };
+
 
 
 class GalileoSolver 
 {
 private:
-  const std::string file_;
-  std::ifstream raw_data_;
+  const std::string file_; // Path to the binary file
+  std::ifstream raw_data_; // Input stream object to read through file
 
-  NavigationData nav_data[36]{};
+  NavigationData nav_data[36]{}; // NavigationData instances for all possible Satellite ID numbers
 
   uint8_t byte_;
 
-  const uint8_t SYNC_HEADER_1_ = 0xb5;
+  // Synchronization header bytes
+  const uint8_t SYNC_HEADER_1_ = 0xb5; 
   const uint8_t SYNC_HEADER_2_ = 0x62;
 
+  // Lock flags for sync headers
   bool sync_lock_1_ = false;
   bool sync_lock_2_ = false;
 
@@ -111,9 +224,10 @@ private:
   unsigned int true_counter = 0;
   unsigned int false_counter = 0;
 
-  unsigned short even_;
-  unsigned int pos_;
+  unsigned short even_; // To check even and odd components are in right order
+  unsigned int pos_; // To arrange the bit position dynamically while reading the bits through data words
 
+  // 8 bytes masks to concatenate data bits at dword4 and dword5
   const uint64_t MASK1_ = 0x3F00C0000000;
   const uint64_t MASK2_ = 0xFFFFC00000000000;
   const uint64_t MASK3_ = 0x3FFFC000;
@@ -121,7 +235,7 @@ private:
   enum MessageType { UBX_RXM_SFRBX, UBX_NAV_SIG, NOT_DEFINED } msg_type_;
 
 
-#pragma pack(1)
+#pragma pack(1) // Handles alignment issues for structs
 
   struct MessageHead 
   {
@@ -561,6 +675,7 @@ public:
   struct WordType63 {};
 
 
+  // For NAV_SIG messages
   struct SignalInformationHead 
   {
     uint32_t iTOW;
@@ -570,6 +685,7 @@ public:
   } payload_navsig_head;
 
 
+  // For NAV_SIG messages
   struct SignalInformation 
   {
     uint8_t gnssId;
@@ -679,27 +795,190 @@ private:
 
 
 public:
+  /**
+   * @brief Constructs a new Galileo Solver object and initializes
+   *        the member file variable
+   * 
+   * @param path Path to the binary file
+   */
   explicit GalileoSolver(const std::string &path);
 
-  void Read();
-  void CheckSyncHeaders(uint8_t &byte_);
-  bool CheckSum(std::ifstream &raw_data_);
-  void ParseInitialData(std::ifstream &raw_data_);
-  bool ParsePayloadData(std::ifstream &raw_data_);
-  bool ParseDataWord(std::ifstream &raw_data_, uint32_t dword, uint8_t svId);
-  uint32_t GetDataWord();
-  uint32_t GetWordMiddle();
-  void MaskWordUtilMiddle(uint64_t& dword_util);
-  void MaskWordDataMiddle(uint64_t& dword_data);
-  bool DetermineWordType(MessageDataWordHead &payload_data_word_head);
-  void GnssCount(MessageDataHead &payload);
-  void GnssCount(SignalInformation &payload);
-  void ClassifySvid();
-  template <typename T> T GetBits(T x, int n);
-  template <typename T> T ConcatenateBits(T data1, T data2, int size1, int size2);
-  void Log() const;
-  void Warn() const;
+  
+  /**
+   * @brief Main reading function
+   * 
+   */
+  void read();
+
+
+  /**
+   * @brief Checks the sync header bytes and controls lock flags
+   * 
+   * @param byte_ Current byte
+   */
+  void checkSyncHeaders(uint8_t &byte_);
+
+
+  /**
+   * @brief Checksum algorithm for UBX messages
+   * 
+   * @param raw_data_ input stream object
+   * @return true when the checksum protection is correct
+   * @return false when the checksum protection is wrong
+   */
+  bool checkSum(std::ifstream &raw_data_);
+
+
+  /**
+   * @brief Controls the message class and message id to lock
+   *        UBX_RXM_SFRBX messages
+   * 
+   * @param raw_data_ input stream object
+   */
+  void parseInitialData(std::ifstream &raw_data_);
+
+
+  /**
+   * @brief Reads the initial payload section of the data
+   *        Then calls parseDataWord function to solve 
+   *        the 8 words (each word is 32 bit - 4 byte)
+   *        to get the actual navigation data
+   * 
+   * @param raw_data_ input stream object
+   * @return true when the data is valid
+   * @return false when the data is not valid
+   */
+  bool parsePayloadData(std::ifstream &raw_data_);
+
+
+  /**
+   * @brief Reads and solves the actual navigation data
+   *        through data words. 
+   * 
+   * @param raw_data_ input stream
+   * @param dword first data word
+   * @param svId satellite id
+   * @return true true when the data is valid
+   * @return false when the data is not valid
+   */
+  bool parseDataWord(std::ifstream &raw_data_, uint32_t dword, uint8_t svId);
+
+
+  /**
+   * @brief Gets the data word
+   * 
+   * @return uint32_t one 32 bit data word
+   */
+  uint32_t getDataWord();
+
+
+  /**
+   * @brief Masks and shapes the tail and even/odd parts
+   *        of the 4th and 5th data words
+   * 
+   * @param dword_util 
+   */
+  void maskWordUtilMiddle(uint64_t& dword_util);
+
+
+  /**
+   * @brief Masks and shapes the data part
+   *        of the 4th and 5th data words
+   * 
+   * @param dword_data 
+   */
+  void maskWordDataMiddle(uint64_t& dword_data);
+
+
+  /**
+   * @brief Determines the word type validity 
+   * 
+   * @param payload_data_word_head 
+   * @return true when the type is valid
+   * @return false when the type is not valid
+   */
+  bool determineWordType(MessageDataWordHead &payload_data_word_head);
+
+  /**
+   * @brief GNSS counter function for UBX-RXM-SFRBX messages
+   * 
+   * @param payload 
+   */
+  void gnssCount(MessageDataHead &payload);
+
+
+  /**
+   * @brief GNSS counter function for UBX-NAV-SIG messages
+   * 
+   * @param payload 
+   */
+  void gnssCount(SignalInformation &payload);
+
+
+  /**
+   * @brief Classifies and counts the message num that is sent
+   *        from which satellites
+   * 
+   */
+  void classifySvid();
+
+
+  /**
+   * @brief Reads n number of bits in a data word.
+   *        Defined in this header file
+   * 
+   * @tparam T 
+   * @param x data word
+   * @param n bit number
+   * @return T data
+   */
+  template <typename T> T getBits(T x, int n);
+
+
+  /**
+   * @brief Concatenate split bits for the nav data that is 
+   *        seperated between data words.
+   *        Defined in this header file
+   * 
+   * @tparam T 
+   * @param data1 
+   * @param data2 
+   * @param size1 
+   * @param size2 
+   * @return T 
+   */
+  template <typename T> T concatenateBits(T data1, T data2, int size1, int size2);
+
+  /**
+   * @brief Log counters etc. to console
+   * 
+   */
+  void log() const;
+
+  /**
+   * @brief Send warning message to console
+   * 
+   */
+  void warn() const;
 };
+
+
+template <typename T> 
+T GalileoSolver::getBits(T x, int n) 
+{
+  T res = (x << pos_) & (~0 << ((sizeof(x) * 8) - n));
+  res = (res >> ((sizeof(x) * 8) - n));
+  pos_ += n;
+  return res;
+}
+
+
+template <typename T>
+T GalileoSolver::concatenateBits(T data1, T data2, int size1, int size2) 
+{
+  T data = (data1 << size2) | (data2);
+  return data;
+}
 
 
 template <class T> 
