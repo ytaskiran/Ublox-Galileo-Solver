@@ -140,7 +140,7 @@ private:
 public: 
   /**
    * @brief These flags makes sure the joint Ionospheric and Time System Correction
-   *        parameters are proccessed once
+   *        parameters are processed once
    * 
    */
   static bool flag1_;
