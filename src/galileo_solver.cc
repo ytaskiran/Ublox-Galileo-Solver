@@ -308,14 +308,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_1.reserved = reserved;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_1, 1, svId);
-        nav_data[i].checkFull(1);
-      }
-    }
+    nav_data[svId-1].add(word_type_1, svId);
+    nav_data[svId-1].checkFull();
+    
     return true;
   }
 
@@ -367,14 +362,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_2.reserved = reserved;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_2, 2, svId);
-        nav_data[i].checkFull(2);
-      }
-    }
+    nav_data[svId-1].add(word_type_2, svId);
+    nav_data[svId-1].checkFull();
+    
     return true;
   }
 
@@ -430,14 +420,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_3.sisa = sisa;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_3, 3, svId);
-        nav_data[i].checkFull(3);
-      }
-    }
+    nav_data[svId-1].add(word_type_3, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -495,14 +480,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_4.spare = spare;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_4, 4, svId);
-        nav_data[i].checkFull(4);
-      }
-    }
+    nav_data[svId-1].add(word_type_4, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -583,14 +563,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_5.spare = spare;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_5, 5, svId);
-        nav_data[i].checkFull(5);
-      }
-    }
+    nav_data[svId-1].add(word_type_5, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -648,14 +623,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_6.spare = spare;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_6, 6, svId);
-        nav_data[i].checkFull(6);
-      }
-    }
+    nav_data[svId-1].add(word_type_6, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -719,14 +689,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_7.reserved = reserved;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_7, 7, svId);
-        nav_data[i].checkFull(7);
-      }
-    }
+    nav_data[svId-1].add(word_type_7, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -791,14 +756,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_8.spare = spare;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_8, 8, svId);
-        nav_data[i].checkFull(8);
-      }
-    }
+    nav_data[svId-1].add(word_type_8, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -864,14 +824,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_9.diff_ia_na = diff_ia_na;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_9, 9, svId);
-        nav_data[i].checkFull(9);
-      }
-    }
+    nav_data[svId-1].add(word_type_9, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -935,14 +890,9 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_10.week_num = week_num;
 
 
-    for (int i=0; i<36; i++) 
-    {
-      if (i+1 == svId) 
-      {
-        nav_data[i].add(word_type_10, 10, svId);
-        nav_data[i].checkFull(10);
-      }
-    }
+    nav_data[svId-1].add(word_type_10, svId);
+    nav_data[svId-1].checkFull();
+
     return true;
   }
 
@@ -1377,7 +1327,7 @@ bool NavigationData::flag3_ = false;
 bool NavigationData::flag4_ = false;
 
 
-void NavigationData::checkFull(unsigned int type) 
+void NavigationData::checkFull() 
 {
   if (flag1_ && flag2_ && flag3_ && !flag4_) 
   {

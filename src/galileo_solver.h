@@ -157,10 +157,9 @@ public:
    * 
    * @tparam T 
    * @param word Data word member struct 
-   * @param type Page type 
    * @param svId Satellite ID
    */
-  template <class T> void add(T word, unsigned int type, unsigned int svId);
+  template <class T> void add(T word, unsigned int svId);
 
 
   /**
@@ -176,9 +175,8 @@ public:
    *        If it is full, then calls write and and reset functions.
    *        Also checks if the header information is obtained.
    * 
-   * @param type Page type
    */
-  void checkFull(unsigned int type);
+  void checkFull();
 
 
   /**
@@ -982,11 +980,11 @@ T GalileoSolver::concatenateBits(T data1, T data2, int size1, int size2)
 
 
 template <class T> 
-inline void NavigationData::add(T word, unsigned int type, unsigned int svId) {}
+inline void NavigationData::add(T word, unsigned int svId) {}
 
 
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType1>(GalileoSolver::WordType1 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType1>(GalileoSolver::WordType1 word, unsigned int svId) 
 {
   svId_ = svId;
   issue_of_data_ = word.issue_of_data;
@@ -998,7 +996,7 @@ inline void NavigationData::add<GalileoSolver::WordType1>(GalileoSolver::WordTyp
 
 
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType2>(GalileoSolver::WordType2 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType2>(GalileoSolver::WordType2 word, unsigned int svId) 
 {
   issue_of_data_ = word.issue_of_data; 
   omega0_ = word.longitude * pow(2, -31) * M_PI; // scale factor 2e-31 
@@ -1009,7 +1007,7 @@ inline void NavigationData::add<GalileoSolver::WordType2>(GalileoSolver::WordTyp
 
 
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType3>(GalileoSolver::WordType3 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType3>(GalileoSolver::WordType3 word, unsigned int svId) 
 {
   issue_of_data_ = word.issue_of_data; 
   omega_dot_ = word.ra_rate_of_change * pow(2, -43) * M_PI; // scale factor 2e-43
@@ -1023,7 +1021,7 @@ inline void NavigationData::add<GalileoSolver::WordType3>(GalileoSolver::WordTyp
 
 
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType4>(GalileoSolver::WordType4 word, unsigned int type, unsigned int svId) // svid not included
+inline void NavigationData::add<GalileoSolver::WordType4>(GalileoSolver::WordType4 word, unsigned int svId) // svid not included
 {
   issue_of_data_ = word.issue_of_data; 
   cic_ = word.C_ic * pow(2, -29); // scale factor 2e-29
@@ -1036,7 +1034,7 @@ inline void NavigationData::add<GalileoSolver::WordType4>(GalileoSolver::WordTyp
 
 
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType5>(GalileoSolver::WordType5 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType5>(GalileoSolver::WordType5 word, unsigned int svId) 
 {
   if (!flag1_) 
   {
@@ -1056,7 +1054,7 @@ inline void NavigationData::add<GalileoSolver::WordType5>(GalileoSolver::WordTyp
 
 
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType6>(GalileoSolver::WordType6 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType6>(GalileoSolver::WordType6 word, unsigned int svId) 
 {
   if (!flag2_) 
   {
@@ -1073,7 +1071,7 @@ inline void NavigationData::add<GalileoSolver::WordType6>(GalileoSolver::WordTyp
 NOT TESTED 
 */
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordType7 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordType7 word, unsigned int svId) 
 {
   alm_issue_of_data_ = word.issue_of_data;
   alm_week_num_ = word.week_num;
@@ -1093,7 +1091,7 @@ inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordTyp
 NOT TESTED 
 */
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordType8 word, unsigned int type, unsigned int svId)
+inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordType8 word, unsigned int svId)
 {
   if (word.issue_of_data == alm_issue_of_data_)
   {
@@ -1122,7 +1120,7 @@ inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordTyp
 NOT TESTED
 */
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordType9 word, unsigned int type, unsigned int svId)
+inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordType9 word, unsigned int svId)
 {
   if (word.issue_of_data = alm_issue_of_data_)
   {
@@ -1150,7 +1148,7 @@ inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordTyp
 NOT TESTED
 */
 template <> 
-inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordType10 word, unsigned int type, unsigned int svId) 
+inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordType10 word, unsigned int svId) 
 {
   if (!flag3_) 
   {
