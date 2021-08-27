@@ -312,7 +312,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_1, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
     
     return true;
   }
@@ -366,7 +366,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_2, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
     
     return true;
   }
@@ -424,7 +424,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_3, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -484,7 +484,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_4, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -567,7 +567,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_5, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -627,7 +627,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_6, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -690,10 +690,10 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
     word_type_7.roc_ra = roc_ra;
     word_type_7.mean_anomaly = mean_anomaly;
     word_type_7.reserved = reserved;
-    
+
 
     nav_data[svId_-1].add(word_type_7, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -760,7 +760,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_8, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -828,7 +828,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_9, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -894,7 +894,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_10, svId_, sigId_);
-    nav_data[svId_-1].checkFull();
+    nav_data[svId_-1].checkFull(sigId_);
 
     return true;
   }
@@ -1330,7 +1330,7 @@ bool NavigationData::flag3_ = false;
 bool NavigationData::flag4_ = false;
 
 
-void NavigationData::checkFull() 
+void NavigationData::checkFull(uint8_t sigId) 
 {
   if (flag1_ && flag2_ && flag3_ && !flag4_) 
   {
@@ -1347,6 +1347,13 @@ void NavigationData::checkFull()
   {
     write();
     reset();
+  }
+
+  if (save_almanac_)
+  {
+    writeAlmanac(sigId);
+    if (sigId == 5) { resetAlmanacE5(); } else if (sigId == 1) { resetAlmanacE1(); }
+    save_almanac_ = false;
   }
 }
 
@@ -1491,4 +1498,57 @@ void NavigationData::writeHeader()
   std::cout << "GPGA\t" << std::scientific << gpga_a0g_ << "\t" << gpga_a1g_ << "\t" << std::fixed << gpga_tow_ << "\t" << gpga_week_ << "\tTIME SYSTEM CORR\n\n";
 
   std::cin.get();
+}
+
+
+void NavigationData::writeAlmanac(uint8_t sigId)
+{
+  if (sigId == 5)
+  {
+    std::cout << "Signal: " << (unsigned int)sigId << std::endl;
+
+    std::cout << "SV ID: " << alm_e5_svid_ << std::endl;
+    std::cout << "Issue of data: " << alm_e5_issue_of_data_ << std::endl;
+    std::cout << "Week Num: " << alm_e5_week_num_ << std::endl;
+    std::cout << "TOW: " << alm_e5_ref_time_ << std::endl;
+    std::cout << "Delta root a: " << alm_e5_delta_root_a_ << std::endl;
+    std::cout << "Eccentricity: " << alm_e5_eccentricity_ << std::endl;
+    std::cout << "Perigee: " << alm_e5_perigee_ << std::endl;
+    std::cout << "Diff IA NA: " << alm_e5_diff_ia_na_ << std::endl;
+    std::cout << "Longitude: " << alm_e5_longitude_ << std::endl;
+    std::cout << "Roc Ra: " << alm_e5_roc_ra_ << std::endl;
+    std::cout << "Mean Anomaly: " << alm_e5_mean_anomaly_ << std::endl;
+    std::cout << "Clock Corr Bias: " << alm_e5_clock_corr_bias_ << std::endl;
+    std::cout << "Clock COrr Linear: " << alm_e5_clock_corr_linear_ << std::endl;
+    std::cout << "Sig health e5b: " << alm_e5_sig_health_e5b_ << std::endl;
+    std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
+    std::cout << "\n\n\n";
+
+    std::cin.get();
+  }
+
+  else if (sigId == 1)
+  {
+    std::cout << "Signal: " << (unsigned int)sigId << std::endl;
+
+    std::cout << "SV ID: " << alm_e1_svid_ << std::endl;
+    std::cout << "Issue of data: " << alm_e1_issue_of_data_ << std::endl;
+    std::cout << "Week Num: " << alm_e1_week_num_ << std::endl;
+    std::cout << "TOW: " << alm_e1_ref_time_ << std::endl;
+    std::cout << "Delta root a: " << alm_e1_delta_root_a_ << std::endl;
+    std::cout << "Eccentricity: " << alm_e1_eccentricity_ << std::endl;
+    std::cout << "Perigee: " << alm_e1_perigee_ << std::endl;
+    std::cout << "Diff IA NA: " << alm_e1_diff_ia_na_ << std::endl;
+    std::cout << "Longitude: " << alm_e1_longitude_ << std::endl;
+    std::cout << "Roc Ra: " << alm_e1_roc_ra_ << std::endl;
+    std::cout << "Mean Anomaly: " << alm_e1_mean_anomaly_ << std::endl;
+    std::cout << "Clock Corr Bias: " << alm_e1_clock_corr_bias_ << std::endl;
+    std::cout << "Clock COrr Linear: " << alm_e1_clock_corr_linear_ << std::endl;
+    std::cout << "Sig health e5b: " << alm_e1_sig_health_e5b_ << std::endl;
+    std::cout << "Sig health e1: " << alm_e1_sig_health_e1_ << std::endl;
+    std::cout << "\n\n\n";
+
+    std::cin.get();
+  }
+  
 }
