@@ -128,6 +128,9 @@ bool GalileoSolver::parsePayloadData(std::ifstream &raw_data_)
     if (payload_data_word_head.page_type == 1) // Skip alert pages
       return false;
 
+    svId_ = payload_sfrbx_head.svId;
+    sigId_ = payload_sfrbx_head.reserved0;
+
     counter++;
     even_ = payload_data_word_head.even_odd;
 
@@ -136,7 +139,7 @@ bool GalileoSolver::parsePayloadData(std::ifstream &raw_data_)
     if (!determineWordType(payload_data_word_head))
       return false;
 
-    if (!parseDataWord(raw_data_, dword, payload_sfrbx_head.svId))
+    if (!parseDataWord(raw_data_, dword))
       return false;
 
     true_counter++;
@@ -261,7 +264,7 @@ bool GalileoSolver::determineWordType(MessageDataWordHead &payload_data_word_hea
 }
 
 
-bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, uint8_t svId)                              
+bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)                              
 {
 
   if (word_type_ == EPHEMERIS_1) // Word Type 1
@@ -308,8 +311,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_1.reserved = reserved;
 
 
-    nav_data[svId-1].add(word_type_1, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_1, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
     
     return true;
   }
@@ -362,8 +365,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_2.reserved = reserved;
 
 
-    nav_data[svId-1].add(word_type_2, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_2, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
     
     return true;
   }
@@ -420,8 +423,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_3.sisa = sisa;
 
 
-    nav_data[svId-1].add(word_type_3, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_3, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -480,8 +483,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_4.spare = spare;
 
 
-    nav_data[svId-1].add(word_type_4, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_4, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -563,8 +566,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_5.spare = spare;
 
 
-    nav_data[svId-1].add(word_type_5, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_5, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -623,8 +626,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_6.spare = spare;
 
 
-    nav_data[svId-1].add(word_type_6, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_6, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -687,10 +690,10 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_7.roc_ra = roc_ra;
     word_type_7.mean_anomaly = mean_anomaly;
     word_type_7.reserved = reserved;
+    
 
-
-    nav_data[svId-1].add(word_type_7, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_7, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -756,8 +759,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_8.spare = spare;
 
 
-    nav_data[svId-1].add(word_type_8, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_8, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -824,8 +827,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_9.diff_ia_na = diff_ia_na;
 
 
-    nav_data[svId-1].add(word_type_9, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_9, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -890,8 +893,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1, ui
     word_type_10.week_num = week_num;
 
 
-    nav_data[svId-1].add(word_type_10, svId);
-    nav_data[svId-1].checkFull();
+    nav_data[svId_-1].add(word_type_10, svId_, sigId_);
+    nav_data[svId_-1].checkFull();
 
     return true;
   }
@@ -1350,6 +1353,7 @@ void NavigationData::checkFull()
 
 void NavigationData::reset() 
 {
+  svId_ = 0;
   epoch_ = 0;
   clock_bias_ = INIT;
   clock_drift_ = INIT;
@@ -1376,6 +1380,46 @@ void NavigationData::reset()
   sig_health_validity_ = INIT;
   bgd1_ = INIT;
   bgd2_ = INIT;
+}
+
+
+void NavigationData::resetAlmanacE5()
+{
+  alm_e5_issue_of_data_ = INIT;
+  alm_e5_week_num_ = 0;
+  alm_e5_ref_time_ = 0;
+  alm_e5_svid_ = 0;
+  alm_e5_delta_root_a_ = INIT;
+  alm_e5_eccentricity_ = INIT;
+  alm_e5_perigee_ = INIT;
+  alm_e5_diff_ia_na_ = INIT;
+  alm_e5_longitude_ = INIT;
+  alm_e5_roc_ra_ = INIT;
+  alm_e5_mean_anomaly_ = INIT;
+  alm_e5_clock_corr_bias_ = INIT;
+  alm_e5_clock_corr_linear_ = INIT;
+  alm_e5_sig_health_e5b_ = 0;
+  alm_e5_sig_health_e1_ = 0;
+}
+
+
+void NavigationData::resetAlmanacE1()
+{
+  alm_e1_issue_of_data_ = INIT;
+  alm_e1_week_num_ = 0;
+  alm_e1_ref_time_ = 0;
+  alm_e1_svid_ = 0;
+  alm_e1_delta_root_a_ = INIT;
+  alm_e1_eccentricity_ = INIT;
+  alm_e1_perigee_ = INIT;
+  alm_e1_diff_ia_na_ = INIT;
+  alm_e1_longitude_ = INIT;
+  alm_e1_roc_ra_ = INIT;
+  alm_e1_mean_anomaly_ = INIT;
+  alm_e1_clock_corr_bias_ = INIT;
+  alm_e1_clock_corr_linear_ = INIT;
+  alm_e1_sig_health_e5b_ = 0;
+  alm_e1_sig_health_e1_ = 0;
 }
 
 
