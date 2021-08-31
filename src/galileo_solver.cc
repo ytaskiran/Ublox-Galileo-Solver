@@ -1348,13 +1348,6 @@ void NavigationData::checkFull(uint8_t sigId)
     if (prev_toe_ != ref_time_) { write(); prev_toe_ = ref_time_; }
     reset();
   }
-
-  if (save_almanac_)
-  {
-    writeAlmanac(sigId);
-    if (sigId == 5) { resetAlmanacE5(); } else if (sigId == 1) { resetAlmanacE1(); }
-    save_almanac_ = false;
-  }
 }
 
 
@@ -1505,7 +1498,7 @@ void NavigationData::writeAlmanac(uint8_t sigId)
 {
   if (sigId == 5)
   {
-    /*std::cout << "Signal: " << (unsigned int)sigId << std::endl;
+    std::cout << "Signal: " << (unsigned int)sigId << std::endl;
 
     std::cout << "SV ID: " << alm_e5_svid_ << std::endl;
     std::cout << "Issue of data: " << alm_e5_issue_of_data_ << std::endl;
@@ -1523,13 +1516,11 @@ void NavigationData::writeAlmanac(uint8_t sigId)
     std::cout << "Sig health e5b: " << alm_e5_sig_health_e5b_ << std::endl;
     std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
     std::cout << "\n\n\n";
-
-    std::cin.get();*/
   }
 
   else if (sigId == 1)
   {
-    /*std::cout << "Signal: " << (unsigned int)sigId << std::endl;
+    std::cout << "Signal: " << (unsigned int)sigId << std::endl;
 
     std::cout << "SV ID: " << alm_e1_svid_ << std::endl;
     std::cout << "Issue of data: " << alm_e1_issue_of_data_ << std::endl;
@@ -1547,8 +1538,8 @@ void NavigationData::writeAlmanac(uint8_t sigId)
     std::cout << "Sig health e5b: " << alm_e1_sig_health_e5b_ << std::endl;
     std::cout << "Sig health e1: " << alm_e1_sig_health_e1_ << std::endl;
     std::cout << "\n\n\n";
-
-    std::cin.get();*/
   }
+
+  // std::cin.get();
   
 }

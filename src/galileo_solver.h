@@ -1148,23 +1148,6 @@ inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordTyp
       alm_e5_longitude_ = word.longitude * pow(2, -15) * M_PI;
       alm_e5_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
       alm_e5_mean_anomaly_ = word.mean_anomaly * pow(2, -15) * M_PI;
-
-      std::cout << "Word Type: 7" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "SV ID 1: " << alm_e5_svid_ << std::endl;
-      std::cout << "Issue of data: " << alm_e5_issue_of_data_ << std::endl;
-      std::cout << "Week Num: " << alm_e5_week_num_ << std::endl;
-      std::cout << "TOW: " << alm_e5_ref_time_ << std::endl;
-      std::cout << "Delta root a: " << alm_e5_delta_root_a_ << std::endl;
-      std::cout << "Eccentricity: " << alm_e5_eccentricity_ << std::endl;
-      std::cout << "Perigee: " << alm_e5_perigee_ << std::endl;
-      std::cout << "Diff IA NA: " << alm_e5_diff_ia_na_ << std::endl;
-      std::cout << "Longitude: " << alm_e5_longitude_ << std::endl;
-      std::cout << "Roc Ra: " << alm_e5_roc_ra_ << std::endl;
-      std::cout << "Mean Anomaly: " << alm_e5_mean_anomaly_ << std::endl;
-      std::cout << "\n\n";
     }
 
     else if (sigId == 1)
@@ -1180,23 +1163,6 @@ inline void NavigationData::add<GalileoSolver::WordType7>(GalileoSolver::WordTyp
       alm_e1_longitude_ = word.longitude * pow(2, -15) * M_PI;
       alm_e1_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
       alm_e1_mean_anomaly_ = word.mean_anomaly * pow(2, -15) * M_PI;
-
-      std::cout << "Word Type: 7" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "SV ID 1: " << alm_e1_svid_ << std::endl;
-      std::cout << "Issue of data: " << alm_e1_issue_of_data_ << std::endl;
-      std::cout << "Week Num: " << alm_e1_week_num_ << std::endl;
-      std::cout << "TOW: " << alm_e1_ref_time_ << std::endl;
-      std::cout << "Delta root a: " << alm_e1_delta_root_a_ << std::endl;
-      std::cout << "Eccentricity: " << alm_e1_eccentricity_ << std::endl;
-      std::cout << "Perigee: " << alm_e1_perigee_ << std::endl;
-      std::cout << "Diff IA NA: " << alm_e1_diff_ia_na_ << std::endl;
-      std::cout << "Longitude: " << alm_e1_longitude_ << std::endl;
-      std::cout << "Roc Ra: " << alm_e1_roc_ra_ << std::endl;
-      std::cout << "Mean Anomaly: " << alm_e1_mean_anomaly_ << std::endl;
-      std::cout << "\n\n";
     }
   }
 }
@@ -1216,12 +1182,9 @@ inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordTyp
       alm_e5_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
       alm_e5_sig_health_e5b_ = word.sig_health_e5b;
       alm_e5_sig_health_e1_ = word.sig_health_e1;
-      save_almanac_ = true;
 
-      std::cout << "Clock Corr Bias: " << alm_e5_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e5_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e5_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
+      writeAlmanac(sigId);
+      resetAlmanacE5();
     }
 
     if (word.svid_2 != 0)
@@ -1234,25 +1197,6 @@ inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordTyp
       alm_e5_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
       alm_e5_longitude_ = word.longitude * pow(2, -15) * M_PI;
       alm_e5_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
-
-      std::cout << "Word Type: 8" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "Clock Corr Bias: " << alm_e5_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e5_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e5_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
-
-      std::cout << "Issue of Data: " << alm_e5_issue_of_data_ << std::endl;
-      std::cout << "SVID 2: " << alm_e5_svid_ << std::endl;
-      std::cout << "Delta root a: " << alm_e5_delta_root_a_ << std::endl;
-      std::cout << "Eccentricity: " << alm_e5_eccentricity_ << std::endl;
-      std::cout << "Perigee: " << alm_e5_perigee_ << std::endl;
-      std::cout << "Diff IA NA: " << alm_e5_diff_ia_na_ << std::endl;
-      std::cout << "Longitude: " << alm_e5_longitude_ << std::endl;
-      std::cout << "Roc Ra: " << alm_e5_roc_ra_ << std::endl;
-      std::cout << "\n\n";
     }
   }
 
@@ -1264,10 +1208,12 @@ inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordTyp
       alm_e1_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
       alm_e1_sig_health_e5b_ = word.sig_health_e5b;
       alm_e1_sig_health_e1_ = word.sig_health_e1;
-      save_almanac_ = true;
+
+      writeAlmanac(sigId);
+      resetAlmanacE1();
     }
 
-    if (word.svid_2)
+    if (word.svid_2 != 0)
     {
       alm_e1_issue_of_data_ = word.issue_of_data;
       alm_e1_svid_ = word.svid_2;
@@ -1277,25 +1223,6 @@ inline void NavigationData::add<GalileoSolver::WordType8>(GalileoSolver::WordTyp
       alm_e1_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
       alm_e1_longitude_ = word.longitude * pow(2, -15) * M_PI;
       alm_e1_roc_ra_ = word.roc_ra * pow(2, -33) * M_PI;
-
-      std::cout << "Word Type: 8" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "Clock Corr Bias: " << alm_e1_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e1_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e1_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e1_sig_health_e1_ << std::endl;
-
-      std::cout << "Issue of Data: " << alm_e1_issue_of_data_ << std::endl;
-      std::cout << "SVID 2: " << alm_e1_svid_ << std::endl;
-      std::cout << "Delta root a: " << alm_e1_delta_root_a_ << std::endl;
-      std::cout << "Eccentricity: " << alm_e1_eccentricity_ << std::endl;
-      std::cout << "Perigee: " << alm_e1_perigee_ << std::endl;
-      std::cout << "Diff IA NA: " << alm_e1_diff_ia_na_ << std::endl;
-      std::cout << "Longitude: " << alm_e1_longitude_ << std::endl;
-      std::cout << "Roc Ra: " << alm_e1_roc_ra_ << std::endl;
-      std::cout << "\n\n";
     }
   }
 }
@@ -1309,7 +1236,7 @@ inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordTyp
 {
   if (sigId == 5)
   {
-    if (word.issue_of_data = alm_e5_issue_of_data_)
+    if (word.issue_of_data == alm_e5_issue_of_data_)
     {
       alm_e5_week_num_ = word.week_num;
       alm_e5_ref_time_ = word.ref_time * 600;
@@ -1318,42 +1245,27 @@ inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordTyp
       alm_e5_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
       alm_e5_sig_health_e5b_ = word.sig_health_e5b;
       alm_e5_sig_health_e1_ = word.sig_health_e1;
-      save_almanac_ = true;
+
+      writeAlmanac(sigId);
+      resetAlmanacE5();
     }
 
     if (word.svid_3 != 0)
     {
+      alm_e5_issue_of_data_ = word.issue_of_data;
+      alm_e5_week_num_ = word.week_num;
+      alm_e5_ref_time_ = word.ref_time * 600;
       alm_e5_svid_ = word.svid_3;
       alm_e5_delta_root_a_ = word.delta_root_a * pow(2, -9);
       alm_e5_eccentricity_ = word.eccentricity * pow(2, -16);
       alm_e5_perigee_ = word.perigee * pow(2, -15) * M_PI;
       alm_e5_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
-
-      std::cout << "Word Type 9" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "Issue of Data: " << alm_e5_issue_of_data_ << std::endl;
-      std::cout << "Week Num: " << alm_e5_week_num_ << std::endl;
-      std::cout << "TOW: " << alm_e5_ref_time_ << std::endl;
-      std::cout << "Mean Anomaly: " << alm_e5_mean_anomaly_ << std::endl;
-      std::cout << "Clock Corr Bias: " << alm_e5_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e5_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e5_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
-
-      std::cout << "SVID: " << alm_e5_svid_ << std::endl;
-      std::cout << "Delta root a: " << alm_e5_delta_root_a_ << std::endl;
-      std::cout << "Eccentricity: " << alm_e5_eccentricity_ << std::endl;
-      std::cout << "Perigee: " << alm_e5_perigee_ << std::endl;
-      std::cout << "Diff IA NA: " << alm_e5_diff_ia_na_ << std::endl;
-      std::cout << "\n\n";
     }
   }
 
   else if (sigId == 1)
   {
-    if (word.issue_of_data = alm_e1_issue_of_data_)
+    if (word.issue_of_data == alm_e1_issue_of_data_)
     {
       alm_e1_week_num_ = word.week_num;
       alm_e1_ref_time_ = word.ref_time * 600;
@@ -1362,36 +1274,21 @@ inline void NavigationData::add<GalileoSolver::WordType9>(GalileoSolver::WordTyp
       alm_e1_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
       alm_e1_sig_health_e5b_ = word.sig_health_e5b;
       alm_e1_sig_health_e1_ = word.sig_health_e1;
-      save_almanac_ = true;
+
+      writeAlmanac(sigId);
+      resetAlmanacE1();
     }
 
     if (word.svid_3 != 0)
     {
+      alm_e1_issue_of_data_ = word.issue_of_data;
+      alm_e1_week_num_ = word.week_num;
+      alm_e1_ref_time_ = word.ref_time * 600;
       alm_e1_svid_ = word.svid_3;
       alm_e1_delta_root_a_ = word.delta_root_a * pow(2, -9);
       alm_e1_eccentricity_ = word.eccentricity * pow(2, -16);
       alm_e1_perigee_ = word.perigee * pow(2, -15) * M_PI;
       alm_e1_diff_ia_na_ = word.diff_ia_na * pow(2, -14) * M_PI;
-
-      std::cout << "Word Type 9" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "Issue of Data: " << alm_e1_issue_of_data_ << std::endl;
-      std::cout << "Week Num: " << alm_e1_week_num_ << std::endl;
-      std::cout << "TOW: " << alm_e1_ref_time_ << std::endl;
-      std::cout << "Mean Anomaly: " << alm_e1_mean_anomaly_ << std::endl;
-      std::cout << "Clock Corr Bias: " << alm_e1_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e1_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e1_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e1_sig_health_e1_ << std::endl;
-
-      std::cout << "SVID: " << alm_e1_svid_ << std::endl;
-      std::cout << "Delta root a: " << alm_e1_delta_root_a_ << std::endl;
-      std::cout << "Eccentricity: " << alm_e1_eccentricity_ << std::endl;
-      std::cout << "Perigee: " << alm_e1_perigee_ << std::endl;
-      std::cout << "Diff IA NA: " << alm_e1_diff_ia_na_ << std::endl;
-      std::cout << "\n\n";
     }
   }
 }
@@ -1422,22 +1319,9 @@ inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordTy
       alm_e5_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
       alm_e5_sig_health_e5b_ = word.sig_health_e5b;
       alm_e5_sig_health_e1_ = word.sig_health_e1;
-      save_almanac_ = true;
 
-      std::cout << "Word Type 10" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "Issue of Data: " << alm_e5_issue_of_data_ << std::endl;
-      std::cout << "Longitude: " << alm_e5_longitude_ << std::endl;
-      std::cout << "Roc Ra: " << alm_e5_roc_ra_ << std::endl;
-      std::cout << "Mean Anomaly: " << alm_e5_mean_anomaly_ << std::endl;
-      std::cout << "Clock Corr Bias: " << alm_e5_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e5_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e5_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
-
-      std::cout << "\n\n";
+      writeAlmanac(sigId);
+      resetAlmanacE5();
     }
   }
 
@@ -1452,22 +1336,9 @@ inline void NavigationData::add<GalileoSolver::WordType10>(GalileoSolver::WordTy
       alm_e1_clock_corr_linear_ = word.clock_corr_linear * pow(2, -38);
       alm_e1_sig_health_e5b_ = word.sig_health_e5b;
       alm_e1_sig_health_e1_ = word.sig_health_e1;
-      save_almanac_ = true;
 
-      std::cout << "Word Type 10" << std::endl;
-      std::cout << "Gonderen Sat: " << (unsigned int)svId << std::endl;
-      std::cout << "Signal: " << (unsigned int)sigId << std::endl;
-
-      std::cout << "Issue of Data: " << alm_e1_issue_of_data_ << std::endl;
-      std::cout << "Longitude: " << alm_e1_longitude_ << std::endl;
-      std::cout << "Roc Ra: " << alm_e1_roc_ra_ << std::endl;
-      std::cout << "Mean Anomaly: " << alm_e1_mean_anomaly_ << std::endl;
-      std::cout << "Clock Corr Bias: " << alm_e1_clock_corr_bias_ << std::endl;
-      std::cout << "Clock COrr Linear: " << alm_e1_clock_corr_linear_ << std::endl;
-      std::cout << "Sig health e5b: " << alm_e1_sig_health_e5b_ << std::endl;
-      std::cout << "Sig health e1: " << alm_e1_sig_health_e1_ << std::endl;
-
-      std::cout << "\n\n";
+      writeAlmanac(sigId);
+      resetAlmanacE1();
     }
   }
 }
