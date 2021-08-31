@@ -8,6 +8,7 @@
 #include <cmath>
 #include <bitset>
 #include <cfloat>
+#include <iomanip>
 
 #define INIT DBL_MAX
 
@@ -80,6 +81,8 @@ private:
   double sig_health_validity_ = INIT;
   double bgd1_ = INIT;
   double bgd2_ = INIT;
+
+  double prev_toe_;
 
 
 private:

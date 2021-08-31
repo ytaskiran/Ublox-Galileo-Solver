@@ -1345,7 +1345,7 @@ void NavigationData::checkFull(uint8_t sigId)
       crc_ != INIT && omega_ != INIT && omega_dot_ != INIT && roc_inclination_angle_ != INIT &&
       sisa_ != INIT && bgd1_ != INIT && bgd2_ != INIT) 
   {
-    write();
+    if (prev_toe_ != ref_time_) { write(); prev_toe_ = ref_time_; }
     reset();
   }
 
@@ -1457,8 +1457,8 @@ void NavigationData::write()
 
   //usleep(500000);
 
-  nav_data_file_ << "\nE" << svId_ << "\t" << epoch_ << " " << floor((epoch_ % 86400) / 3600) << " " << ((epoch_ % 3600) % 3600) / 60 << "\t" << clock_bias_ 
-                 << "\t" << clock_drift_ << "\t" << clock_drift_rate_ << "\n";
+  nav_data_file_ << "\nE" << svId_ << std::fixed << "\t" << epoch_ << " " << (int)floor((epoch_ % 86400) / 3600) << " " << ((epoch_ % 3600) % 3600) / 60 << "\t" 
+                 << std::scientific << std::setprecision(12) << clock_bias_ << "\t" << clock_drift_ << "\t" << clock_drift_rate_ << "\n";
 
   nav_data_file_ << "  \t" << issue_of_data_ << "\t" << crs_ 
                  << "\t" << delta_n_ << "\t" << mean_anomaly_ << "\n";
@@ -1497,7 +1497,7 @@ void NavigationData::writeHeader()
   std::cout << "GAUT\t" << gaut_a0_ << "\t" << gaut_a1_ << "\t" << std::fixed << gaut_tow_ << "\t" << gaut_week_ << "\tTIME SYSTEM CORR\n";
   std::cout << "GPGA\t" << std::scientific << gpga_a0g_ << "\t" << gpga_a1g_ << "\t" << std::fixed << gpga_tow_ << "\t" << gpga_week_ << "\tTIME SYSTEM CORR\n\n";
 
-  std::cin.get();
+  //std::cin.get();
 }
 
 
@@ -1505,7 +1505,7 @@ void NavigationData::writeAlmanac(uint8_t sigId)
 {
   if (sigId == 5)
   {
-    std::cout << "Signal: " << (unsigned int)sigId << std::endl;
+    /*std::cout << "Signal: " << (unsigned int)sigId << std::endl;
 
     std::cout << "SV ID: " << alm_e5_svid_ << std::endl;
     std::cout << "Issue of data: " << alm_e5_issue_of_data_ << std::endl;
@@ -1524,12 +1524,12 @@ void NavigationData::writeAlmanac(uint8_t sigId)
     std::cout << "Sig health e1: " << alm_e5_sig_health_e1_ << std::endl;
     std::cout << "\n\n\n";
 
-    std::cin.get();
+    std::cin.get();*/
   }
 
   else if (sigId == 1)
   {
-    std::cout << "Signal: " << (unsigned int)sigId << std::endl;
+    /*std::cout << "Signal: " << (unsigned int)sigId << std::endl;
 
     std::cout << "SV ID: " << alm_e1_svid_ << std::endl;
     std::cout << "Issue of data: " << alm_e1_issue_of_data_ << std::endl;
@@ -1548,7 +1548,7 @@ void NavigationData::writeAlmanac(uint8_t sigId)
     std::cout << "Sig health e1: " << alm_e1_sig_health_e1_ << std::endl;
     std::cout << "\n\n\n";
 
-    std::cin.get();
+    std::cin.get();*/
   }
   
 }
