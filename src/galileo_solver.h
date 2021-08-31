@@ -173,8 +173,6 @@ public:
   static bool flag3_;
   static bool flag4_;
 
-  bool save_almanac_ = false;
-
 public:
   /**
    * @brief Assigns the words read to the navigation data batch member variables
@@ -219,7 +217,7 @@ public:
    *        Also checks if the header information is obtained.
    * 
    */
-  void checkFull(uint8_t sigId);
+  void checkFull();
 
 
   /**
@@ -1048,6 +1046,8 @@ inline void NavigationData::add<GalileoSolver::WordType1>(GalileoSolver::WordTyp
   mean_anomaly_ = word.mean_anomaly * pow(2, -31) * M_PI; // scale factor  2e-31
   eccentricity_ = word.eccentricity * pow(2, -33); // scale factor 2e-33
   semi_major_root_ = word.root_semi_major_axis * pow(2, -19); // scale factor 2e-19
+
+  this->checkFull();
 }
 
 
@@ -1059,6 +1059,8 @@ inline void NavigationData::add<GalileoSolver::WordType2>(GalileoSolver::WordTyp
   inclination_angle_ = word.inclination_angle * pow(2, -31) * M_PI; // scale factor 2e-31
   omega_ = word.perigee * pow(2, -31) * M_PI; // scale factor 2e-31 
   roc_inclination_angle_ = word.ia_rate_of_change * pow(2, -43) * M_PI; // scale factor 2e-43 
+
+  this->checkFull();
 }
 
 
@@ -1077,6 +1079,8 @@ inline void NavigationData::add<GalileoSolver::WordType3>(GalileoSolver::WordTyp
   else if (word.sisa > 50 && word.sisa <= 75) sisa_ = 0.5 + ((word.sisa - 50) * 0.02);
   else if (word.sisa > 75 && word.sisa <= 100) sisa_ = 1 + ((word.sisa - 75) * 0.04);
   else if (word.sisa > 100 && word.sisa <= 125) sisa_ = 2 + ((word.sisa - 100) * 0.16);
+
+  this->checkFull();
 }
 
 
@@ -1090,6 +1094,8 @@ inline void NavigationData::add<GalileoSolver::WordType4>(GalileoSolver::WordTyp
   clock_bias_ = word.clock_bias_corr * pow(2, -34); // scale factor 2e-34
   clock_drift_ = word.clock_drift_corr * pow(2, -46); // scale factor 2e-46
   clock_drift_rate_ = word.clock_drift_rate_corr * pow(2, -59); // scale factor 2e-59
+
+  this->checkFull();
 }
 
 
@@ -1110,6 +1116,8 @@ inline void NavigationData::add<GalileoSolver::WordType5>(GalileoSolver::WordTyp
   sig_health_validity_ = word.sig_health_validity;
 
   week_num_ = word.week_num; // scale factor 1
+
+  this->checkFull();
 }
 
 
@@ -1124,6 +1132,8 @@ inline void NavigationData::add<GalileoSolver::WordType6>(GalileoSolver::WordTyp
     gaut_week_ = word.utc_reference_week;
     flag2_ = true;
   }
+
+  this->checkFull();
 }
 
 

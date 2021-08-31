@@ -312,7 +312,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_1, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
     
     return true;
   }
@@ -366,8 +366,8 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_2, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
-    
+
+
     return true;
   }
 
@@ -424,7 +424,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_3, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -484,7 +484,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_4, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -567,7 +567,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_5, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -627,7 +627,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_6, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -693,7 +693,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_7, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -760,7 +760,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_8, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -828,7 +828,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_9, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -894,7 +894,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
 
 
     nav_data[svId_-1].add(word_type_10, svId_, sigId_);
-    nav_data[svId_-1].checkFull(sigId_);
+
 
     return true;
   }
@@ -1050,7 +1050,6 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
   }
 
   else if (word_type_ == DUMMY) 
-
     return true;
 
   else 
@@ -1330,7 +1329,7 @@ bool NavigationData::flag3_ = false;
 bool NavigationData::flag4_ = false;
 
 
-void NavigationData::checkFull(uint8_t sigId) 
+void NavigationData::checkFull() 
 {
   if (flag1_ && flag2_ && flag3_ && !flag4_) 
   {
