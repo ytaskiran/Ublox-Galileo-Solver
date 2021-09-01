@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/galileo.dir/src/main.cc.o  -o galileo  libgalileo_solver.a 

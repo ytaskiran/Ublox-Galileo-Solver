@@ -1,0 +1,2 @@
+/usr/bin/ar qc libgalileo_solver.a  CMakeFiles/galileo_solver.dir/src/galileo_solver.cpp.o
+/usr/bin/ranlib libgalileo_solver.a

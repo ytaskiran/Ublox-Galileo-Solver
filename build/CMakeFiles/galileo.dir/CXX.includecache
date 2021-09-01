@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/galileo_solver.h
+fstream
+-
+iostream
+-
+string
+-
+unistd.h
+-
+cmath
+-
+bitset
+-
+cfloat
+-
+iomanip
+-
+
+/home/cezeri/galileo/src/main.cc
+galileo_solver.h
+/home/cezeri/galileo/src/galileo_solver.h
+memory
+-
+

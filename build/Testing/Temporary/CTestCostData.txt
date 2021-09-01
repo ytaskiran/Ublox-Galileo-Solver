@@ -1,0 +1,6 @@
+GalileoSolverTest.CheckSyncHeaders 8 0.000308281
+GalileoSolverTest.CheckSyncHeaders2 6 0.000382364
+GalileoSolverTest.DetermineWordType 1 0.00232183
+GalileoSolverTest.DetermineWordTypeTrue 3 0.00081083
+GalileoSolverTest.DetermineWordTypeFalse 3 0.000825407
+---
