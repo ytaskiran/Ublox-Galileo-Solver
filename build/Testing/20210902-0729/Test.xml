@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20210902-0729-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.16.3"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="ubuntu"
+	OSRelease="5.11.0-27-generic"
+	OSVersion="#29~20.04.1-Ubuntu SMP Wed Aug 11 15:58:17 UTC 2021"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="158"
+	ProcessorCacheSize="9216"
+	NumberOfLogicalCPU="4"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="2047"
+	TotalPhysicalMemory="3901"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="2808"
+	>
+	<Testing>
+		<StartDateTime>Sep 02 00:29 PDT</StartDateTime>
+		<StartTestTime>1630567790</StartTestTime>
+		<TestList>
+			<Test>./GalileoSolverTest.DetermineWordTypeFalse</Test>
+			<Test>./GalileoSolverTest.DetermineWordTypeTrue</Test>
+			<Test>./GalileoSolverTest.CheckSyncHeaders2</Test>
+			<Test>./GalileoSolverTest.CheckSyncHeaders</Test>
+		</TestList>
+		<Test Status="passed">
+			<Name>GalileoSolverTest.DetermineWordTypeFalse</Name>
+			<Path>.</Path>
+			<FullName>./GalileoSolverTest.DetermineWordTypeFalse</FullName>
+			<FullCommandLine>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.DetermineWordTypeFalse" "--gtest_also_run_disabled_tests"</FullCommandLine>
+			<Results>
+				<NamedMeasurement type="numeric/double" name="Execution Time">
+					<Value>0.013681</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Completed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.DetermineWordTypeFalse" "--gtest_also_run_disabled_tests"</Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value encoding="base64" compression="gzip">eJyVUcGKwkAMvc9XpDc9tKxXwUNBd1gWukvr4qH0MItZGUgTmaaKf29tWVlXRH2nwHt5eUkyUZyCFdkQwhIbhR9PigFmYB15QimEdhhOVDLHjqk940rCennY4qujBk05O6OCvGX2vIEJaO8WpP6tm9YrJqaMz6jAknw7GnjknQ/CNXKnRY3b7T/xX8+rdKaE/CuDHtXj4Vdpnr1lNoqi+2U5uMPH+xMTYPQCdTN+YpOhA1TU0dg8di9FF+K17PnyG7e+AMFxcjmnW+4zLYrF/HS+QZuYI4p2q20=</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<Test Status="passed">
+			<Name>GalileoSolverTest.DetermineWordTypeTrue</Name>
+			<Path>.</Path>
+			<FullName>./GalileoSolverTest.DetermineWordTypeTrue</FullName>
+			<FullCommandLine>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.DetermineWordTypeTrue" "--gtest_also_run_disabled_tests"</FullCommandLine>
+			<Results>
+				<NamedMeasurement type="numeric/double" name="Execution Time">
+					<Value>0.0111682</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Completed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.DetermineWordTypeTrue" "--gtest_also_run_disabled_tests"</Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value encoding="base64" compression="gzip">eJyVUMEKglAQvL+v2GMdlLoGHgLDQ2CRRgfx8MJNHjx347kW/X2aFFkENqeFmdmdnZgFFxAxlxYhxVrgZKyggwAibY1FTthe0HWUH2LLVIbwwK5Ib2dMXYMqC17IYdcQGSphDvJY5rh6znVjBH2VeS/kEFk+atvzSBfjmCqkVoviNecP8fvOr3Aqg90+hgfy8dl7A2zW400wmUFVT//I1jtAWLSdqnENCGrnFXylYb+/egWnyR/eaX/bLpNkFXaF9Fpf3QF4QKCA====</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<Test Status="passed">
+			<Name>GalileoSolverTest.CheckSyncHeaders2</Name>
+			<Path>.</Path>
+			<FullName>./GalileoSolverTest.CheckSyncHeaders2</FullName>
+			<FullCommandLine>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.CheckSyncHeaders2" "--gtest_also_run_disabled_tests"</FullCommandLine>
+			<Results>
+				<NamedMeasurement type="numeric/double" name="Execution Time">
+					<Value>0.010258</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Completed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.CheckSyncHeaders2" "--gtest_also_run_disabled_tests"</Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value encoding="base64" compression="gzip">eJyVUE1rwlAQvL9fMUc9JGiPBQ9FJYWCLcaeQg6vuqaPvuyWl43Ff998UNGKEOe0sDO7M7MSpUckIoUnbKhS7J1XCpghsd55klT8gUK7iueftP1Kj7x9JrujUD2YbHZCjnXN7LjAFNodClL+zVXtlGKTRSfkSLx8WN/viQ8uCJfEDZc0qr//kc9vXhkzGdbvK3TIh/nuyXh9GSbAaIKyGt/hCaNpo4CKWj82w5Ir2RDt5Icve73VJ4Ll+PJPk+vtKU2Xi7aInhubX0IImkw=</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<Test Status="passed">
+			<Name>GalileoSolverTest.CheckSyncHeaders</Name>
+			<Path>.</Path>
+			<FullName>./GalileoSolverTest.CheckSyncHeaders</FullName>
+			<FullCommandLine>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.CheckSyncHeaders" "--gtest_also_run_disabled_tests"</FullCommandLine>
+			<Results>
+				<NamedMeasurement type="numeric/double" name="Execution Time">
+					<Value>0.0033552</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Completed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value>/home/cezeri/galileo/build/galileo_test "--gtest_filter=GalileoSolverTest.CheckSyncHeaders" "--gtest_also_run_disabled_tests"</Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value encoding="base64" compression="gzip">eJyVkDELwkAMhff7FRl1aNFVcBCVCoKK1al0ODXWw2si17Tiv7daLFYR6psC+ZK8vAULDiBgTizCBjOBo7GCDoYQaGsscsi2QPdo+eMT7s/hjfYz1Ad0mYqGtWJY50SGEuiDPPc4Tl91lhtBX0VerRgCyzttqz5SYRxTilSyKF5++YDfd375UhGstwt4Km5lu2JhOW/FQ6cHadb9w1E1AcKibVe1+1tQO+/AV2qm+itNcJr85p3yrdUoDKeTRwwV66s70pmZtA==</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<EndDateTime>Sep 02 00:29 PDT</EndDateTime>
+		<EndTestTime>1630567790</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

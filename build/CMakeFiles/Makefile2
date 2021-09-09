@@ -137,8 +137,8 @@ _deps/googletest-build/googletest/clean: _deps/googletest-build/googletest/CMake
 # Target rules for target CMakeFiles/galileo_test.dir
 
 # All Build rule for target.
-CMakeFiles/galileo_test.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
 CMakeFiles/galileo_test.dir/all: CMakeFiles/galileo_solver.dir/all
+CMakeFiles/galileo_test.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
 CMakeFiles/galileo_test.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all
 	$(MAKE) -f CMakeFiles/galileo_test.dir/build.make CMakeFiles/galileo_test.dir/depend
 	$(MAKE) -f CMakeFiles/galileo_test.dir/build.make CMakeFiles/galileo_test.dir/build

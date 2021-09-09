@@ -1,6 +1,9 @@
-GalileoSolverTest.CheckSyncHeaders 8 0.000308281
-GalileoSolverTest.CheckSyncHeaders2 6 0.000382364
+GalileoSolverTest.CheckSyncHeaders 21 0.000114374
+GalileoSolverTest.CheckSyncHeaders2 19 0.000106682
 GalileoSolverTest.DetermineWordType 1 0.00232183
-GalileoSolverTest.DetermineWordTypeTrue 3 0.00081083
-GalileoSolverTest.DetermineWordTypeFalse 3 0.000825407
+GalileoSolverTest.DetermineWordTypeTrue 16 0.000138224
+GalileoSolverTest.DetermineWordTypeFalse 16 0.000139876
+GalileoSolverTest.GetBits 11 0.000194125
+GalileoSolverTest.ConcatenateBits 7 0.000318207
+GalileoSolverTest.MaskWordMiddle 2 0.00109038
 ---

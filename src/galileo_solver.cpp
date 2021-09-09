@@ -538,7 +538,7 @@ bool GalileoSolver::parseDataWord(std::ifstream &raw_data_, uint32_t dword_1)
     uint64_t dword_data = dword_middle;
     maskWordDataMiddle(dword_data);
     unsigned time_of_week_2 = getBits(dword_data, 11);
-    unsigned spare = getBits(dword_data, 11);
+    unsigned spare = getBits(dword_data, 23);
 
 
     unsigned sig_hs_dvs_1 = concatenateBits(sig_health_e5b, data_validity_e5b, 2, 1);
@@ -1083,6 +1083,7 @@ void GalileoSolver::maskWordUtilMiddle(uint64_t &dword_util)
 void GalileoSolver::maskWordDataMiddle(uint64_t &dword_data) 
 {
   bitsize_ = 34;
+  pos_ = 0;
   uint64_t dword_data1 = dword_data & MASK2_;
   uint64_t dword_data2 = dword_data & MASK3_;
   dword_data = (dword_data1) | (dword_data2 << 16);
